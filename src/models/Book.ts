@@ -1,11 +1,11 @@
-class Book {
+export default class Book {
     constructor(
         private title: string,
         private author: string,
         private isbn: number,
         private imageUrl: string,
         private rate: number,
-        private myAssesment=-1,
+        private myAssesment: number=-1,
     ){}
     public get info() : {title: string, author: string, isbn: number, imageUrl: string, rate: number}{
         return{
