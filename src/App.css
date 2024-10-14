@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -39,4 +40,18 @@
 
 .read-the-docs {
   color: #888;
+}
+
+button{
+  width: 250px;
+  height: 50px;
+  background: #93AB9D;
+  border-radius: 100px;
+  color: beige;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
