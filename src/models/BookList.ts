@@ -1,25 +1,25 @@
 import Book from './Book';
 
 export default class BookList{
-    static names: string[] = ["wishlist", "recommendation", "reading", "haveRead", "favourite"];
+    //static names: string[] = ["wishlist", "recommendation", "reading", "haveRead"];
     constructor(
-        private listName: string,
-        private books: Book[]=[]
+       // protected listName: string,
+        protected books: Book[]=[]
     ){}
-    set name(name:string){
+    /*set name(name:string){
         if(!BookList.names.includes(name)){
             throw new Error('There is not such type of list');
         }
         this.listName=name;
-    }
+    }*/
     get list() : Book[]{
         return this.books;
     }
     addBook(book : Book, myAssesment:number=-1) : void{
-        this.books.push(book);
-        if(this.listName==("haveRead") || this.listName==("favourite")){
+        /*if(this.listName=="haveRead"){
             book.myRate=myAssesment;
-        }
+        }*/
+        this.books.push(book);
     }
     removeBook(book : Book) : void{
         let isHere = false;
@@ -33,5 +33,8 @@ export default class BookList{
         if(isHere){
             this.books.splice(i,1);
         }
+    }
+    public get bookArray() : Book[]{
+        return this.books;
     }
 }
