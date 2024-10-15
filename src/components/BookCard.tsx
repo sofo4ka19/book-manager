@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Book from "../models/Book";
 
-function BookCard(book:Book){
+function BookCard({book} :{book:Book}){
     const [isOpen, setIsOpen] = useState<boolean>(false);
-
+// need functions for remove and change the list
     return (
         <>
             <section className="card card_small">
@@ -11,11 +11,11 @@ function BookCard(book:Book){
                 <h2>{book.info.title}</h2>
                 <h3>{book.info.authors.join(', ')}</h3>
                 <span onClick={() => setIsOpen(true)}>More</span>
-                <button>Change the list</button>
+                <button>Change the list</button> 
                 <span>Remove</span>
             </section>
 
-            {isOpen && ( // Якщо isOpen true, показати модальне вікно
+            {isOpen && ( 
                 <div className="modal">
                     <section className="card card_big">
                         <span className="close" onClick={() => setIsOpen(false)}>&times;</span>
@@ -29,3 +29,5 @@ function BookCard(book:Book){
         </>
     );
 }
+
+export default BookCard;
