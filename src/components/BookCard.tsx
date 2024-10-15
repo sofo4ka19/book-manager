@@ -3,6 +3,7 @@ import Book from "../models/Book";
 
 function BookCard({book} :{book:Book}){
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    console.log(book);
 // need functions for remove and change the list
     return (
         <>

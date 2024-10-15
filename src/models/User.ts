@@ -13,7 +13,7 @@ export default class User{
         private haveRead: BookList,
         private recommendationList: RecomendationList,
         private preference: {authors: string[]|null, genre: string[]|null, language:string[]},
-        private bio: string,
+        private bio: string|null,
         private avatar: string = "/avatar_default.png" //will be changed to FILE type later
     ){
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,11 +25,16 @@ export default class User{
             bookLists.push(null);
         }*/
     }
-    
+    public get info(): {username: string, photo: string, bio:string|null}{
+        return {username: this.username, photo: this.avatar, bio: this.bio};
+    }
     public get lists(): BookList[]{
         return [this.wishlist, this.readingList, this.haveRead, this.recommendationList];
     }
-    changeUsername(newUsername: string){
+    public set recommends(rec:RecomendationList){
+        this.recommendationList=rec;
+    }
+    public changeUsername(newUsername: string){
         //needs to check if somebody doesn't have such username
         this.username=newUsername;
     }
@@ -44,20 +49,20 @@ export default class User{
         }
         this.bookLists[j]=list;
     }*/
-    addBookToList(list:BookList, book:Book, myAssesment=-1){
+    public addBookToList(list:BookList, book:Book, myAssesment=-1){
         list.addBook(book, myAssesment); //perhaps needs updating
     }
-    getRecommends(){
+    public getRecommends(){
         this.recommendationList.updatePreferences();
         this.recommendationList.addBook();
     }
     public get preferences(): {authors: string[]|null, genre: string[]|null, language:string[]}{
         return { authors: this.preference.authors, genre: this.preference.genre, language: this.preference.language}
     }
-    removeBookFromList(list:BookList, book:Book){
+    public removeBookFromList(list:BookList, book:Book){
         list.removeBook(book); // perhaps needs updating
     }
-    changeList(listFrom:BookList, listTo:BookList, book:Book){
+    public changeList(listFrom:BookList, listTo:BookList, book:Book){
         this.addBookToList(listTo, book);
         this.removeBookFromList(listFrom, book);
     }

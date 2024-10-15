@@ -8,7 +8,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Scrollbar, Navigation } from 'swiper/modules';
-const apiKey = import.meta.env.REACT_APP_GOOGLE_BOOKS_API_KEY;
+const apiKey = import.meta.env.VITE_APP_GOOGLE_BOOKS_API_KEY;
 
 
 function List({list}:{list:BookList|RecomendationList}){
@@ -24,8 +24,9 @@ function List({list}:{list:BookList|RecomendationList}){
             setToggle(true);
         }
     }
+
     async function findBook(e: React.FormEvent){
-        e.preventDefault;
+        e.preventDefault();
         if(author==="" && title===""){
             alert("Please enter either an author or a title.");
             return;
@@ -43,15 +44,14 @@ function List({list}:{list:BookList|RecomendationList}){
             const data = await response.json();
             const books = data.items.map((item: any) => new Book(
              item.volumeInfo.title,
-             item.volumeInfo.authors /*? item.volumeInfo.authors.join(', ') :*/ || "Unknown Author", // З'єднуємо авторів у рядок
-             item.volumeInfo.categories /*? item.volumeInfo.categories.join(', ') :*/ || "Unknown Genre", // З'єднуємо жанри у рядок
+             item.volumeInfo.authors || "Unknown Author", 
+             item.volumeInfo.categories || "Unknown Genre", 
              item.volumeInfo.industryIdentifiers ? item.volumeInfo.industryIdentifiers[0].identifier : "Unknown ISBN",
              item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : "/bookCover_default.png",
              item.volumeInfo.averageRating || 0,
              item.volumeInfo.language || "Unknown Language"
             ));
             //should be optimized
-            
             if(books.length<=0){
                 alert("No books were found")
                 setToggle(false);
@@ -73,17 +73,20 @@ function List({list}:{list:BookList|RecomendationList}){
             <button onClick={add} className="add">+</button>
         </div>
 
-        (toggle &&
+        {toggle && (
             <div className="modal">
                 <div className="card">
                     <span className="close" onClick={() => {setToggle(false); setFoundBooks([])}}>&times;</span>
                     {foundBooks.length===0 && (
                         <form className="addCard" onSubmit={findBook}>
                             <h2>Add new book to the list</h2>
-                            <label>Author</label>
-                            <input onChange={(e) => author = e.target.value} type="text" />
-                            <label>Title</label>
-                            <input onChange={(e) => title = e.target.value} type="text" />
+                            <div className="fields">
+                                <label>Author</label>
+                                <input onChange={(e) => author = e.target.value} type="text" />
+                                <label>Title</label>
+                                <input onChange={(e) => title = e.target.value} type="text" />
+                            </div>
+                            
                             <button type="submit" className="find">Find</button>
                         </form>
                     )}
@@ -93,6 +96,7 @@ function List({list}:{list:BookList|RecomendationList}){
                         <Swiper
                             slidesPerView={3}
                             spaceBetween={30}
+                            slidesPerGroup={3}
                             pagination={{
                                 clickable: true,
                             }}
@@ -110,11 +114,9 @@ function List({list}:{list:BookList|RecomendationList}){
                                 </SwiperSlide>
                              ))}
                         </Swiper>
-                        </>
-                    )}
+                        </>)}
                 </div>
-            </div>
-        )
+            </div>)}
         </>
     );
 }

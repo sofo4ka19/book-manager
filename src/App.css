@@ -1,9 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+*{
+  padding: 0;
+  margin: 0;
+  color: #374C4A;
+}
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #C2B3A3;
+  min-height: 100vh;
 }
 
 .logo {
@@ -45,13 +58,135 @@
 button{
   width: 250px;
   height: 50px;
-  background: #93AB9D;
+  background-color: #93AB9D;
   border-radius: 100px;
-  color: beige;
+  /* color: beige; */
+  border-color: #374C4A;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 35px;
+  color: #374C4A;
   font-family: "Great Vibes", cursive;
-  font-weight: 400;
-  font-style: normal;
+}
+.add{
+  width: 50px;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+.list{
+  width: 100%;
+  min-height: 50vh;
+  height: 100%;
+  flex-grow: 2;
+}
+
+.profile{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 25px 0;
+  background-color: #93AB9D;
+}
+.profile img{
+  border-radius: 500px;
+  width: 200px;
+}
+.aboutMe{
+  width: 70%;
+  text-align: left;
+}
+nav{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;
+  font-size: 38px;
+}
+nav ul{
+  cursor: pointer;
+}
+nav .active{
+  text-decoration: underline #93AB9D;
+  color: #754B42;
+}
+
+.modal{
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card{
+  width: 50%;
+  height: 70%;
+  background-color: #C2B3A3;
+  display: flex;
+  flex-wrap: wrap;
+  /* align-items: start; */
+  /* flex-direction: column;
+  justify-content: space-between; */
+}
+.addCard{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.fields{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+label{
+  font-size: 36px;
+}
+input{
+  width: 30%;
+  height: 50px;
+  font-size: 28px;
+  border-radius: 50px;
+  padding: 5px 20px;
+}
+h2{
+  width: 100%;
+  font-size: 50px;
+}
+.close{
+  width: 100%;
+  text-align: right;
+  font-size: 50px;
+  height: fit-content;
+  line-height: 0;
+}
+
+.swiper-wrapper{
+  width: 80%;
+  height: auto;
+}
+.card_small{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.card_small img{
+  width: 75%;
+  max-height: 200px;
+}
+.card_small h2{
+  font-size: 32px;
+  line-height: 1;
+}
+.card_small button{
+  width: 80%;
+  height: auto;
+  font-size: 25px;
 }
