@@ -48,3 +48,16 @@ export default tseslint.config({
   },
 })
 ```
+
+# About project
+
+This project is a web application for book managing, where you can manage what you want to read, are reading, have just read and based on this can take some recommendations. Google Books API is used for it.
+
+In the nearest future will be added opportunity to authorize and can access your data on different devices. Also there will be a page with challenges, which are global or private, you will be added friends, chat with them and share private challenges
+
+This project is done for OOP lessons and now there are implemented such elements:
+- class Book: 7 private fields, 2 getters and 3 setters
+- class BookList: 1 protected field, 2 methods and 2 getters
+- class RecommendedList extends BookList: 4 fields, 4 methods (1 of them implements polymorphism)
+- class User: 10 fields, 5 methods, 3 getters and 1 setter
+- components: BookCard, List, NavList, Profile
