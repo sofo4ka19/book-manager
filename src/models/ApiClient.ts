@@ -1,15 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export default class ApiClient {
-  protected client: AxiosInstance;
+  protected static client: AxiosInstance;
 
-  constructor(baseURL: string) {
-    this.client = axios.create({
-      baseURL,
-    });
-  }
-
-  protected async get<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {
+  protected static async get<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response: AxiosResponse<T> = await this.client.get(endpoint, config);
       return response.data;
@@ -19,7 +13,7 @@ export default class ApiClient {
     }
   }
 
-  protected async post<T>(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  protected static async post<T>(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response: AxiosResponse<T> = await this.client.post(endpoint, data, config);
       return response.data;
@@ -29,7 +23,7 @@ export default class ApiClient {
     }
   }
 
-  private handleError(error: any): void {
+  private static handleError(error: any): void {
     // Обробка помилок (наприклад, логування чи показ повідомлень)
     console.error("API Error:", error);
   }
