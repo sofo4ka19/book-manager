@@ -7,32 +7,29 @@ export default class User{
         private username: string,
         private email: string, //perhaps it will be also deleted
         private password: string, //it will be deleted when we connect it to firebase
-        //private bookLists: (BookList|null)[]=[],
-        private wishlist: BookList,
-        private readingList: BookList,
-        private haveRead: BookList,
-        private recommendationList: RecomendationList,
-        private preference: {authors: string[]|null, genre: string[]|null, language:string[]},
         private bio: string|null,
-        private avatar: string = "/avatar_default.png" //will be changed to FILE type later
+        private avatar: string = "/avatar_default.png",
+        private wishlist: BookList = new BookList(),
+        private readingList: BookList = new BookList(),
+        private haveRead: BookList = new BookList(),
+        private recommendationList: RecomendationList,
+        private preference: {authors: string[]|null, genre: string[]|null, language:string[]} //will be changed to FILE type later
     ){
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
             throw new Error("Unavailable email value");
         }
-        this.preference.language=["en"];
-        /*while(bookLists.length<5){
-            bookLists.push(null);
-        }*/
+        this.wishlist = new BookList;
+        this.readingList = new BookList;
+        this.haveRead = new BookList;
+        this.recommendationList = new RecomendationList;
+        this.preference = {authors:null, genre:null, language:["en"]};
     }
     public get info(): {username: string, photo: string, bio:string|null}{
         return {username: this.username, photo: this.avatar, bio: this.bio};
     }
     public get lists(): BookList[]{
         return [this.wishlist, this.readingList, this.haveRead, this.recommendationList];
-    }
-    public set recommends(rec:RecomendationList){
-        this.recommendationList=rec;
     }
     public changeUsername(newUsername: string){
         //needs to check if somebody doesn't have such username
@@ -49,11 +46,18 @@ export default class User{
         }
         this.bookLists[j]=list;
     }*/
-    public addBookToList(list:BookList, book:Book, myAssesment=-1){
-        list.addBook(book, myAssesment); //perhaps needs updating
+    public addBookToList(list:BookList, book:Book, myAssesment?:number){
+        if(list==this.haveRead){
+            if(myAssesment){
+                book.myRate=myAssesment;
+            } else{
+                throw new Error("enter your mark to the book");
+            }
+        }
+        list.addBook(book);
     }
     public getRecommends(){
-        this.recommendationList.updatePreferences();
+        this.recommendationList = new RecomendationList();
         this.recommendationList.addBook();
     }
     public get preferences(): {authors: string[]|null, genre: string[]|null, language:string[]}{

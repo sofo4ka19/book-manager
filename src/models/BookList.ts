@@ -1,9 +1,9 @@
 import Book from './Book';
+import BookApi from './BookApi';
+
 
 export default class BookList{
-    //static names: string[] = ["wishlist", "recommendation", "reading", "haveRead"];
     constructor(
-       // protected listName: string,
         protected books: Book[]=[]
     ){}
     /*set name(name:string){
@@ -12,26 +12,35 @@ export default class BookList{
         }
         this.listName=name;
     }*/
-    get list() : Book[]{
+    public get list() : Book[]{
         return this.books;
     }
-    addBook(book : Book, myAssesment:number=-1) : void{
-        /*if(this.listName=="haveRead"){
-            book.myRate=myAssesment;
-        }*/
-        this.books.push(book);
-    }
-    removeBook(book : Book) : void{
-        let isHere = false;
-        let i=0;
-        for(i; i<this.books.length; i++){
-            if(this.books[i]==book){
-                isHere=true;
-                break;
-            }
+    public async findBook(title:string|null, author:string):Promise<Book[]>{
+        const authors = (author!="")?(author.split(', ')):null;
+        title = (title=="")?(null):title;
+        try{
+            return await BookApi.searchBooks(title, authors, null);
         }
-        if(isHere){
-            this.books.splice(i,1);
+       catch (error){
+        console.error("Error fetching recommendations:", error);
+        return [];
+       }
+    }
+    public isHere(id:string):number{
+        for(let i=0; i<this.books.length; i++){
+            if(this.books[i].id==id) return i;
+        }
+        return -1;
+    }
+    public addBook(book : Book) : void{
+       if(this.isHere(book.id)==-1){
+            this.books.push(book);
+       }
+       throw new Error ("This book is already here");
+    }
+    public removeBook(book : Book) : void{
+        if(this.isHere(book.id)!=-1){
+            this.books.splice(this.isHere(book.id),1);
         }
     }
     public get bookArray() : Book[]{
