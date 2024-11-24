@@ -1,6 +1,7 @@
 import ApiClient from './ApiClient';
-import Book from './Book';
+import Book from '../models/Book';
 import axios from 'axios';
+import BookSerializer from '../serializers/BookSerializer';
 
 export default class BookApi extends ApiClient {
     public static async searchBooks(title:string|null, authors:string[]|null, genres:string[]|null, languages:string[]=["en"]): Promise<Book[]> {
@@ -36,14 +37,7 @@ export default class BookApi extends ApiClient {
     this.client = axios.create({baseURL:'https://www.googleapis.com/books/v1'});
     this.client.defaults.params = { key: import.meta.env.VITE_APP_GOOGLE_BOOKS_API_KEY };
     const response = await this.get<any>(endpoint, config);
-    return response.data.items.map((item: any) => new Book(
-        item.volumeInfo.title,
-        item.volumeInfo.authors || ["Unknown Author"],
-        item.volumeInfo.categories || ["Unknown Genre"],
-        item.volumeInfo.industryIdentifiers ? item.volumeInfo.industryIdentifiers[0].identifier : "Unknown ISBN",
-        item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : "/bookCover_default.png",
-        item.volumeInfo.averageRating || 0,
-        item.volumeInfo.language || "Unknown Language"
-      ));
+    const serialised = new BookSerializer();
+    return response.data.items.map((item: any) => serialised.deserialize(item));
   }
 }
