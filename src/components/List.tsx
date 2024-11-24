@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import BookCard from "./BookCard";
 import BookList from "../models/BookList";
-import Book from "../models/Book";
+import {Book} from "../models/Book";
 import { RecomendationList } from "../models/RecommendationList"; 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Scrollbar, Navigation } from 'swiper/modules';
-const apiKey = import.meta.env.VITE_APP_GOOGLE_BOOKS_API_KEY;
+import BookApi from "../api/BookApi";
+import { useAppStore } from "../models/Store";
 
 
 function List({list}:{list:BookList|RecomendationList}){
@@ -31,27 +32,9 @@ function List({list}:{list:BookList|RecomendationList}){
             alert("Please enter either an author or a title.");
             return;
         }//error modal
-        else{ //this should be made separate because we have it also used in RecommendationList class
-            const params = [];
-            if(author) params.push(`inauthor:${author}`);
-            if(title) params.push(`intitle:${title}`);
-            const query = params.join('+');
-            const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&&printType=books&key=${apiKey}`;
-            const response = await fetch(url);
-            if (!response.ok) {
-             throw new Error(`HTTP error! status: ${response.status}`);
-             }
-            const data = await response.json();
-            const books = data.items.map((item: any) => new Book(
-             item.volumeInfo.title,
-             item.volumeInfo.authors || "Unknown Author", 
-             item.volumeInfo.categories || "Unknown Genre", 
-             item.volumeInfo.industryIdentifiers ? item.volumeInfo.industryIdentifiers[0].identifier : "Unknown ISBN",
-             item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : "/bookCover_default.png",
-             item.volumeInfo.averageRating || 0,
-             item.volumeInfo.language || "Unknown Language"
-            ));
-            //should be optimized
+        else{ 
+            let authors = (author!="")? author.split(', '):null;
+            const books = await BookApi.searchBooks(title, authors, null);
             if(books.length<=0){
                 alert("No books were found")
                 setToggle(false);
@@ -61,7 +44,7 @@ function List({list}:{list:BookList|RecomendationList}){
         }
     }
     function addBook(book:Book){
-        list.addBook(book);
+        useAppStore.getState().addBookToList(list,book);
         setToggle(false);
     }
     return(

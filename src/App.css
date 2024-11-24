@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Unicase:wght@300;400;500;600;700&family=Great+Vibes&display=swap');
 *{
   padding: 0;
   margin: 0;
-  color: #374C4A;
+  color: #452F24;
 }
 #root {
   /* max-width: 1280px; */
@@ -15,65 +15,24 @@
   font-family: "Great Vibes", cursive;
   font-weight: 400;
   font-style: normal;
-  background-color: #C2B3A3;
+  background-color: #CCC1BC;
   min-height: 100vh;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
 
 button{
   width: 250px;
   height: 50px;
-  background-color: #93AB9D;
-  border-radius: 100px;
+  background-color: #76221E;
+  border-radius: 20px;
   /* color: beige; */
-  border-color: #374C4A;
+  /* border-color: #374C4A; */
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 35px;
-  color: #374C4A;
+  color: #CCC1BC;
   font-family: "Great Vibes", cursive;
-}
-.add{
-  width: 50px;
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
 }
 .list{
   width: 100%;
@@ -88,15 +47,25 @@ button{
   justify-content: space-around;
   align-items: center;
   padding: 25px 0;
-  background-color: #93AB9D;
+  background-color: #95766C;
+}
+.profile h1{
+  font-size: 96px;
+  font-family: "Great Vibes", cursive;
 }
 .profile img{
   border-radius: 500px;
   width: 200px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
 }
 .aboutMe{
   width: 70%;
   text-align: left;
+}
+.aboutMe h2{
+  font-family: "Cormorant Unicase", serif;
+  font-size: 36px;
+  font-weight: 500;
 }
 nav{
   width: 100%;
@@ -105,12 +74,39 @@ nav{
   padding: 15px 0;
   font-size: 38px;
 }
+nav li{
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+}
 nav ul{
   cursor: pointer;
 }
 nav .active{
-  text-decoration: underline #93AB9D;
-  color: #754B42;
+  text-decoration: underline #76221E;
+  color: #76221E;
+}
+.features{
+  display: flex;
+  justify-content: space-between;
+}
+.icon{
+  /* height: 45px; */
+  width: 45px;
+  color: #452F24;
+  background: none ;
+  border: none;
+  font-family: "Cormorant Unicase", serif;
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  margin-left: 7px;
+}
+main{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .modal{
@@ -128,7 +124,7 @@ nav .active{
 .card{
   width: 50%;
   height: 70%;
-  background-color: #C2B3A3;
+  /* background-color: #C2B3A3; */
   display: flex;
   flex-wrap: wrap;
   /* align-items: start; */

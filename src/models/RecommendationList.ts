@@ -1,6 +1,6 @@
 import BookList from "./BookList"
-import Book from "./Book";
-import BookApi from "./BookApi";
+import {Book} from "./Book";
+import BookApi from "../api/BookApi";
 import { useAppStore } from "./Store";
 
 export class RecomendationList extends BookList{

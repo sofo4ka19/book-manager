@@ -1,5 +1,5 @@
-import Book from './Book';
-import BookApi from './BookApi';
+import {Book} from './Book';
+import BookApi from '../api/BookApi';
 
 
 export default class BookList{

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import User from "./User";
-import Book from "./Book";
+import {Book} from "./Book";
 import BookList from "./BookList";
 
 interface AppState {
