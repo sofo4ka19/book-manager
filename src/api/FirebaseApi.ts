@@ -3,6 +3,7 @@ import { auth, db } from '../firebase';
 //import { User as FirebaseUser } from 'firebase/auth';
 import { UserTemp } from '../models/User';
 import { Book } from '../models/Book';
+import { useAppStore } from '../models/Store';
 
 export default class FirebaseApi{
     static async createUser(user: UserTemp) {
@@ -174,6 +175,14 @@ export default class FirebaseApi{
             }
         }
         return books;
+      }
+      static async logout(){
+        try {
+            await auth.signOut(); // викликаємо метод для логауту в Firebase
+            useAppStore.setState({ user: null }); // оновлюємо стан користувача в zustand store
+        } catch (error) {
+            console.error("Logout error:", error); // обробка помилки
+        }
       }
 }
 
