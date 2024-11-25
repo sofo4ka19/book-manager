@@ -1,32 +1,28 @@
-import { useState } from 'react'
-import './App.css'
-import Profile from './components/Profile'
-import User from './models/User';
-import NavList from './components/NavList';
-import List from './components/List';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { auth } from "./firebase"; // ваш екземпляр firebase
+import Auth from "./components/Auth"; // компонент для авторизації та реєстрації
+import Home from "./components/Home"; // головна сторінка
+import "./App.css";
 
-function App() {
-  const user = new User(
-    "Sofiia Broiako", "anonym@knu.ua", "Student at Taras Shevchenko National University of Kyiv" 
-  );
-  const[list, setList] = useState(user.lists[0]);
-  const [activeList, setActiveList] = useState<string>("Wishlist");
-  const listNames = ["Recommendations", "Wishlist", "Reading", "Finished"];
-  function transition(name:string){
-    const index = listNames.indexOf(name);
-    if (index !== -1) {
-      const updatedList = user.lists[index];
-      setList(updatedList);
-      setActiveList(name);
-    }
-  }
+const App = () => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
+    return unsubscribe;
+  }, []);
+
   return (
-    <>
-      <Profile user={user}/>
-      <NavList selected={transition} activeList={activeList} listNames={listNames} />
-      <List list = {list} />
-    </>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={user ? <Navigate to="/home" /> : <Auth />} />
+        <Route path="/home" element={user ? <Home /> : <Navigate to="/" />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;
