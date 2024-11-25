@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { auth, db } from "../firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import FirebaseApi from "../api/FirebaseApi";
+import User from "../models/User";
+import { useAppStore } from "../models/Store";
+import BookList from "../models/BookList";
 
 const Auth = () => {
   const [isRegisterMode, setIsRegisterMode] = useState(true);
@@ -11,47 +15,50 @@ const Auth = () => {
   const [bio, setBio] = useState("");
   const [avatarURL, setAvatarURL] = useState("");
 
-  const defaultAvatarURL = "/images/default-avatar.png";
+  const defaultAvatarURL = "/avatar_default.png";
+  const setUser = useAppStore((state) => state.setUser);
 
   const handleAuth = async () => {
     try {
+      let userCredential;
+      let userId;
       if (isRegisterMode) {
         // Реєстрація
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const userId = userCredential.user.uid;
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        userId = userCredential.user.uid;
 
         // Збереження у Firestore
-        const userDoc = doc(db, "users", userId);
-        await setDoc(userDoc, {
-          name,
-          bio,
-          avatarURL: avatarURL || defaultAvatarURL,
-          lists: {
-            currentlyReading: [],
-            read: [],
-            wantToRead: [],
-          },
-        });
+        await FirebaseApi.createUser({id: userId, username: name, email: email, bio: bio, avatar:avatarURL});
+        const newUser = new User(name, bio, avatarURL || defaultAvatarURL);
+        setUser(newUser);
         alert("User registered successfully!");
       } else {
         // Вхід
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const userId = userCredential.user.uid;
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
+        userId = userCredential.user.uid;
 
         // Завантаження даних користувача
-        const userDoc = doc(db, "users", userId);
-        const userSnap = await getDoc(userDoc);
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          console.log("User Data:", userData);
-        } else {
-          alert("User data not found!");
+        const userData = await FirebaseApi.getUserData(userId);
+        console.log("User Data:", userData);
+        if (!userData) {
+          throw new Error("User data don't found");
+        }else{
+          const wishlistBooks = await FirebaseApi.loadBooksByIds(userData.wishlist || []);
+          const currentlyReadingBooks = await FirebaseApi.loadBooksByIds(userData.readingList || []);
+          const haveReadBooks = await FirebaseApi.loadBooksByIds(userData.haveRead || []); //change to have op with rating
+          const wishlist = new BookList(wishlistBooks);
+          const currentlyReading = new BookList(currentlyReadingBooks);
+          const haveRead = new BookList(haveReadBooks);
+
+          const loggedInUser = new User(userData.username, userData.email, userData.bio, userData.avatar || defaultAvatarURL, wishlist, currentlyReading, haveRead);
+          setUser(loggedInUser);
         }
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
   const handlePasswordReset = async () => {
     if (!email) {
       alert("Будь ласка, введіть email!");
