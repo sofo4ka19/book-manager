@@ -29,7 +29,7 @@ const Auth = () => {
 
         // Збереження у Firestore
         await FirebaseApi.createUser({id: userId, username: name, email: email, bio: bio, avatar:avatarURL});
-        const newUser = new User(name, bio, avatarURL || defaultAvatarURL);
+        const newUser = new User(userId, name, bio, avatarURL || defaultAvatarURL);
         setUser(newUser);
         alert("User registered successfully!");
       } else {
@@ -50,7 +50,7 @@ const Auth = () => {
           const currentlyReading = new BookList(currentlyReadingBooks);
           const haveRead = new BookList(haveReadBooks);
 
-          const loggedInUser = new User(userData.username, userData.email, userData.bio, userData.avatar || defaultAvatarURL, wishlist, currentlyReading, haveRead);
+          const loggedInUser = new User(userId, userData.username, userData.email, userData.bio, userData.avatar || defaultAvatarURL, wishlist, currentlyReading, haveRead);
           setUser(loggedInUser);
         }
       }

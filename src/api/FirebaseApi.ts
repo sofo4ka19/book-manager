@@ -1,5 +1,6 @@
 import { doc, setDoc, collection, addDoc, getDoc, getDocs, query, where, updateDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import { updateProfile, updatePassword } from "firebase/auth";
 //import { User as FirebaseUser } from 'firebase/auth';
 import { UserTemp } from '../models/User';
 import { Book } from '../models/Book';
@@ -175,6 +176,27 @@ export default class FirebaseApi{
             }
         }
         return books;
+      }
+      static async updateUserInfo(userId:string, name:string, bio: string|null, avatarUrl: string){
+        const userRef = doc(db, "users", userId);
+    
+            // Формуємо дані для оновлення
+            const updates: { name?: string; bio?: string|null; avatar?: string } = {};
+            
+            if (name && name.length > 0) {
+                updates.name = name;
+            }
+            if (bio && bio.length > 0) {
+                updates.bio = bio;
+            }
+            if (avatarUrl && avatarUrl.length > 0) {
+                updates.avatar = avatarUrl;
+            }
+
+            // Якщо є що оновлювати, виконуємо оновлення
+            if (Object.keys(updates).length > 0) {
+                await updateDoc(userRef, updates);
+            }
       }
       static async logout(){
         try {

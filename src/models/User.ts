@@ -1,6 +1,7 @@
 import BookList from "./BookList";
 import {Book} from "./Book";
 import { RecomendationList } from "./RecommendationList";
+import { useAppStore } from "./Store";
 
 export interface UserTemp{
     id: string;
@@ -14,6 +15,7 @@ export interface UserTemp{
 }
 export default class User{
     constructor(
+        private id:string,
         private username: string,
         private email: string, //perhaps it will be also deleted
         private bio: string|null,
@@ -33,6 +35,9 @@ export default class User{
     }
     public get lists(): BookList[]{
         return [this.wishlist, this.readingList, this.haveRead, this.recommendationList];
+    }
+    public get uid():string{
+        return this.id;
     }
     // public changeUsername(newUsername: string){
     //     //needs to check if somebody doesn't have such username
@@ -58,5 +63,11 @@ export default class User{
     public changeList(listFrom:BookList, listTo:BookList, book:Book){
         this.addBookToList(listTo, book);
         this.removeBookFromList(listFrom, book);
+    }
+    public changeInfo(name:string, bio: string|null, avatar:string){
+        if(name && name.length>0) this.username=name;
+        if(bio && bio.length>0)this.bio=bio;
+        if(avatar && avatar.length>0)this.avatar = avatar;
+        useAppStore.getState().setUser(this);
     }
 }

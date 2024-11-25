@@ -5,7 +5,7 @@ import BookList from "./BookList";
 
 interface AppState {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User|null) => void;
   getUserBookLists: () => { haveRead: BookList; currentlyReading: BookList; wishlist: BookList };
   addBookToList: (list: BookList, book: Book) => void;
   removeBookFromList: (list: BookList, book: Book) => void;
@@ -15,7 +15,7 @@ interface AppState {
 export const useAppStore = create<AppState>((set, get) => ({
   user: null,
 
-  setUser: (user: User) => set({ user }),
+  setUser: (user: User|null) => set({ user }),
 
   getUserBookLists: () => {
     const user = get().user;
