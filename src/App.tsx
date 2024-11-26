@@ -3,18 +3,40 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { auth } from "./firebase"; // ваш екземпляр firebase
 import Home from "./components/Home"; // головна сторінка
 import "./App.css";
-import { useAppStore } from "./models/Store";
+import { useAppStore } from "./store/Store";
 import LoginCard from "./components/auth/LoginCard.tsx";
 import RegisterCard from "./components/auth/RegisterCard.tsx";
+import FirebaseApi from "./api/FirebaseApi.ts";
 
 const App = () => {
   const setUser = useAppStore((state : any) => state.setUser);
-
+  const defaultAvatarURL = "/avatar_default.png";
   const store = useAppStore();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      //place of the code should be changed, because the same is in LoginCard
+      if(currentUser){
+        const userId = currentUser.uid;
+        try{
+          const userData = await FirebaseApi.getUserData(userId);
+          console.log("User Data:", userData  );
+              if (!userData) {
+                  throw new Error("User data don't found");
+              } else {
+                  store.wishlist = await FirebaseApi.loadBooksByIds(userData.wishlist || []);
+                  store.currentlyReadingList = await FirebaseApi.loadBooksByIds(userData.readingList || []);
+                  store.finishedList = await FirebaseApi.loadBooksByIds(userData.haveRead || []);
+                  userData.id = userId;
+                  if(!userData.avatar) userData.avatar = defaultAvatarURL;
+                  setUser(userData);
+                  console.log("User Data:", store.user  );
+              }
+        } catch (error) {
+          // TODO :catch properly
+          console.error("Error:", error);
+      }
+      }
     });
     return unsubscribe;
   }, []);

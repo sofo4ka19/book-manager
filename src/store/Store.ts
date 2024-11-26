@@ -84,12 +84,15 @@ export const useAppStore = create<AppState>()(
 
     addBookToList: async (book) => {
       const user = get().user;
-      const currentSelectedList = get().currentSelectedList
+      const currentSelectedList = get().currentSelectedList;
+      try{
       if (user && currentSelectedList) await FirebaseApi.addBookToUserList(user.id, currentSelectedList, book)
       // TODO: check if call is successful
+    } catch(error){
+        console.error("Firebase:", error);
+    }
 
-
-      switch (get().currentSelectedList) {
+      switch (currentSelectedList) {
             case "Recommendations":
                 set((state) => ({
                     recommendationsList: [...state.recommendationsList, book],

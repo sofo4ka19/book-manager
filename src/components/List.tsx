@@ -13,7 +13,7 @@ import Modal from "./Modal";
 
 function List(){
     const [toggle, setToggle] = useState<boolean>(false);
-    const [foundBooks, setFoundBooks] = useState<Book[]>([]); //type should be switched to BookList
+    const [foundBooks, setFoundBooks] = useState<Book[]>([]); 
     let author ="";
     let title = "";
     const store = useAppStore();
@@ -44,8 +44,10 @@ function List(){
         }
     }
     async function addBook(book:Book){
-        await useAppStore.getState().addBookToList(book);
+        await store.addBookToList(book);
         setToggle(false);
+        setFoundBooks([]);
+        console.log(store.user)
     }
     // needs implementation
     function addToList(){
@@ -90,27 +92,34 @@ function List(){
                 </form>
             )}
             {foundBooks.length>0 &&(
-                <Swiper
-                slidesPerView={3}
-                spaceBetween={30}
-                slidesPerGroup={3}
-                pagination={{
-                    clickable: true,
-                }}
-                scrollbar={{
-                    hide: true,
-                  }}
-                  navigation={true}
-                modules={[Pagination, Scrollbar, Navigation]}
-                className="mySwiper"
-            >
-                {foundBooks.map((book) => (
-                    <SwiperSlide>
+                foundBooks.map((book) => (
+                    <div>
                         <BookCard book={book}></BookCard>
-                        <button onClick={() => addBook(book)}>Add</button>
-                    </SwiperSlide>
-                 ))}
-            </Swiper>
+                        <button style={{marginRight: '30px'}} onClick={() => addBook(book)}>Add</button>
+                    </div>
+                ))
+                // needs to be set
+            //     <Swiper
+            //     slidesPerView={3}
+            //     spaceBetween={30}
+            //     slidesPerGroup={3}
+            //     pagination={{
+            //         clickable: true,
+            //     }}
+            //     scrollbar={{
+            //         hide: true,
+            //       }}
+            //       navigation={true}
+            //     modules={[Pagination, Scrollbar, Navigation]}
+            //     className="mySwiper"
+            // >
+            //     {foundBooks.map((book) => (
+            //         <SwiperSlide>
+            //             <BookCard book={book}></BookCard>
+            //             <button onClick={() => addBook(book)}>Add</button>
+            //         </SwiperSlide>
+            //      ))}
+            // </Swiper>
             )}
         </Modal>
         </>

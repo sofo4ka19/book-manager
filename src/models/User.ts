@@ -1,7 +1,7 @@
 import BookList from "./BookList";
 import {Book} from "./Book";
 import { RecomendationList } from "./RecommendationList";
-import { useAppStore } from "./Store";
+import { useAppStore } from "../store/Store";
 
 export interface UserTemp{
     id: string;
@@ -68,6 +68,6 @@ export default class User{
         if(name && name.length>0) this.username=name;
         if(bio && bio.length>0)this.bio=bio;
         if(avatar && avatar.length>0)this.avatar = avatar;
-        useAppStore.getState().setUser(this);
+        //useAppStore.getState().setUser(this);
     }
 }

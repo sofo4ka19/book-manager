@@ -2,7 +2,7 @@ import { useState } from "react";
 import { auth } from "../../firebase";
 import { createUserWithEmailAndPassword} from "firebase/auth";
 import FirebaseApi from "../../api/FirebaseApi";
-import { useAppStore } from "../../models/Store";
+import { useAppStore } from "../../store/Store";
 import BasicInput from "../BasicInput";
 import { useNavigate } from "react-router-dom";
 

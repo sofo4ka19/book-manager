@@ -1,17 +1,15 @@
 import { doc, setDoc, collection, addDoc, getDoc, getDocs, query, where, updateDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { updateProfile, updatePassword } from "firebase/auth";
-//import { User as FirebaseUser } from 'firebase/auth';
 import { UserTemp } from '../models/User';
 import { Book } from '../models/Book';
-import { useAppStore } from '../models/Store';
+import { useAppStore } from '../store/Store';
 
 export default class FirebaseApi{
     static async createUser(user: UserTemp) {
         const userRef = doc(db, "users", user.id);
         // Set user data in Firestore
         await setDoc(userRef, {
-          name: user.username,
+          username: user.username,
           email: user.email,
           bio: user.bio || "",
           avatar: user.avatar,
@@ -56,19 +54,19 @@ export default class FirebaseApi{
         if (!bookId) {
           const bookRef = await addDoc(collection(db, "books"), {
             title: book.title,
-            author: book.authors,
-            cover: book.imageUrl,
-            genre: book.genres,
-            isbn: book.isbn,
-
+            authors: book.authors,
+            imageUrl: book.imageUrl,
+            genres: book.genres,
+            isbn: book.isbn || "",
+            rate: book.rate || "",
+            language: book.language || ""
           });
           newBookId = bookRef.id;
         } else {
           newBookId = bookId;
         }
-    
         // Add the book to the user's list
-        const userListRef = doc(db, "users", userId, "lists", listName);
+        const userListRef = doc(db, "users", userId, "lists", listName.toLowerCase());
         await updateDoc(userListRef, {
           books: arrayUnion(newBookId), // Adds the book id to the user's list
         });
@@ -124,46 +122,76 @@ export default class FirebaseApi{
     
       // Check if a book already exists in the Firestore books collection
       static async checkIfBookExists(book: Book): Promise<string | null> {
-        let bookId: string | null = null;
+        //check this logic
+        //let bookId: string | null = null;
+        const booksRef = collection(db, "books"); 
+        let conditions = [];
+        // Додаємо умову для ISBN, якщо він є
         if (book.isbn) {
-            const bookRef = doc(db, "books", book.isbn);  // Використовуємо ISBN як ID
-            const bookSnap = await getDoc(bookRef);
-            if (bookSnap.exists()) {
-              bookId = bookSnap.id;
-            }
+          conditions.push(where("isbn", "==", book.isbn));
+        }
+
+        // Додаємо умову для назви
+        if (book.title) {
+          conditions.push(where("title", "==", book.title));
+        }
+
+        // Додаємо умову для авторів
+        if (book.authors && book.authors.length > 0) {
+          conditions.push(where("authors", "array-contains-any", book.authors));
+        }
+
+        // Створюємо запит тільки якщо є умови
+        if (conditions.length > 0) {
+          const queryConstraints = query(booksRef, ...conditions);
+          const querySnapshot = await getDocs(queryConstraints);
+
+          if (!querySnapshot.empty) {
+            console.log("Book found!");
+            return querySnapshot.docs[0].id; // Повертаємо ID першого знайденого документа
           }
+        }
+
+        console.log("Book not found.");
+        return null; 
+        // if (book.isbn) { 
+        //     const bookSnap = await getDoc(bookRef);
+        //     if (bookSnap.exists()) {
+        //       bookId = bookSnap.id;
+        //     }
+        //   }
       
-          // Якщо ISBN не знайдено, перевіряємо за назвою та автором
-          if (!bookId && book.title) {
-            const booksRef = collection(db, "books");
+        //   // Якщо ISBN не знайдено, перевіряємо за назвою та автором
+        //   if (!bookId && book.title) {
+        //     const booksRef = collection(db, "books");
             
-            // Якщо автори зазначені, шукаємо за автором та назвою
-            if (book.authors && book.authors.length > 0) {
-              const q = query(
-                booksRef,
-                where("title", "==", book.title),
-                where("authors", "array-contains", book.authors[0])  // Шукаємо по першому автору
-              );
+        //     // Якщо автори зазначені, шукаємо за автором та назвою
+        //     if (book.authors && book.authors.length > 0) {
+        //       const q = query(
+        //         booksRef,
+        //         where("title", "==", book.title),
+        //         where("authors", "array-contains", book.authors[0])  // Шукаємо по першому автору
+        //       );
       
-              const querySnapshot = await getDocs(q);
-              if (!querySnapshot.empty) {
-                bookId = querySnapshot.docs[0].id;
-              }
-            } else {
-              // Якщо автори не зазначені, шукаємо лише по назві
-              const q = query(
-                booksRef,
-                where("title", "==", book.title)
-              );
+        //       const querySnapshot = await getDocs(q);
+        //       if (!querySnapshot.empty) {
+        //         bookId = querySnapshot.docs[0].id;
+        //       }
+        //     } else {
+        //       // Якщо автори не зазначені, шукаємо лише по назві
+        //       const q = query(
+        //         booksRef,
+        //         where("title", "==", book.title)
+        //       );
       
-              const querySnapshot = await getDocs(q);
-              if (!querySnapshot.empty) {
-                bookId = querySnapshot.docs[0].id;
-              }
-            }
-          }
+        //       const querySnapshot = await getDocs(q);
+        //       if (!querySnapshot.empty) {
+        //         bookId = querySnapshot.docs[0].id;
+        //       }
+        //     }
+        //   }
       
-          return bookId;
+        //   return bookId;
       }
       static async loadBooksByIds(bookIds: string[]):Promise<Book[]>{ //add polymorphysm to search with ratings
         const books: Book[] = [];
