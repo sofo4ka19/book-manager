@@ -65,6 +65,7 @@ export default class FirebaseApi{
         } else {
           newBookId = bookId;
         }
+        book.id = newBookId;
         // Add the book to the user's list
         const userListRef = doc(db, "users", userId, "lists", listName.toLowerCase());
         await updateDoc(userListRef, {
@@ -74,8 +75,7 @@ export default class FirebaseApi{
     
       // Remove book from user's list and from books collection if necessary
       static async removeBookFromUserList(userId: string, listName: string, bookId: string) {
-        const userListRef = doc(db, "users", userId, "lists", listName);
-    
+        const userListRef = doc(db, "users", userId, "lists", listName.toLowerCase());
         // Remove book from the user's list
         await updateDoc(userListRef, {
           books: arrayRemove(bookId), // Removes the book id from the user's list

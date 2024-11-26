@@ -9,11 +9,15 @@ import { Pagination, Scrollbar, Navigation } from 'swiper/modules';
 import BookApi from "../api/BookApi";
 import { useAppStore } from "../store/Store";
 import Modal from "./Modal";
+import { TypeOfList } from "../store/Store";
 
 
 function List(){
+    const listNames = ["Wishlist", "Reading", "Finished"];
     const [toggle, setToggle] = useState<boolean>(false);
     const [foundBooks, setFoundBooks] = useState<Book[]>([]); 
+    const [toggle2, setToggle2] = useState<boolean>(false);
+    const [activeBook, setActiveBook] = useState<Book|null>(null);
     let author ="";
     let title = "";
     const store = useAppStore();
@@ -53,8 +57,16 @@ function List(){
     function addToList(){
 
     }
-    function changeTheList(){
-
+    async function changeTheList(toList:string){
+        if(!activeBook){
+            return; //error
+        }
+        await store.removeBookFromList(activeBook.id);
+        console.log("success") 
+        store.setCurrentList(toList as TypeOfList)
+        await store.addBookToList(activeBook);
+        setActiveBook(null);
+        setToggle2(false);
     }
     function removeFromList(){
 
@@ -69,7 +81,11 @@ function List(){
                     }
                     {!(store.currentSelectedList === "Recommendations") &&(
                         <>
-                        <button onClick={changeTheList}>Change</button>
+                        <button onClick={() => {
+                            setToggle2(true);
+                            setActiveBook(book);
+                            }}>
+                                Change</button>
                         <span onClick={removeFromList}>Remove</span>
                         </>
                     )}
@@ -94,8 +110,9 @@ function List(){
             {foundBooks.length>0 &&(
                 foundBooks.map((book) => (
                     <div>
-                        <BookCard book={book}></BookCard>
-                        <button style={{marginRight: '30px'}} onClick={() => addBook(book)}>Add</button>
+                        <BookCard book={book}>
+                            <button style={{marginRight: '30px'}} onClick={() => addBook(book)}>Add</button>
+                        </BookCard>
                     </div>
                 ))
                 // needs to be set
@@ -121,6 +138,15 @@ function List(){
             //      ))}
             // </Swiper>
             )}
+        </Modal>
+        <Modal isOpen={toggle2} onClose={() => setToggle2(false)} title="Choose the list">
+            {listNames.map((list) => (
+                <span 
+                    key={list} 
+                    className={`listName ${store.currentSelectedList === list ? "hidden" : ""}`}
+                    onClick={() => changeTheList(list)}
+                >{list}</span>
+            ))}
         </Modal>
         </>
     );
