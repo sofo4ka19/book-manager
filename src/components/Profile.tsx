@@ -1,16 +1,33 @@
-import React, {useState} from "react";
-import User from "../models/User";
+import {useState} from "react";
 import FirebaseApi from "../api/FirebaseApi";
 import Modal from "./Modal";
+import { useAppStore } from "../store/Store";
+import { useNavigate } from "react-router-dom";
 
-function Profile({user}:{user: User}){
+function Profile(){
+    const navigate = useNavigate()
+    const user = useAppStore().user
+    const store = useAppStore();
+
+    if(!user){
+        navigate("/login")
+        return;
+    }
+
     const[toggle, setToggle] = useState<boolean>(false);
-    const [name, setName] = useState(user.info.username);
-    const [bio, setBio] = useState(user.info.bio);
-    const [avatarURL, setAvatarURL] = useState(user.info.photo);
+    const [name, setName] = useState(user.username);
+    const [bio, setBio] = useState(user.bio);
+    const [avatarURL, setAvatarURL] = useState(user.avatar);
+
+    const defaultAvatarURL = "/avatar_default.png";
+
     function changeInfo(){
-        user.changeInfo(name,bio,avatarURL);
-        FirebaseApi.updateUserInfo(user.uid, name, bio, avatarURL);
+        if(!user){
+            navigate("/login")
+            return;
+        }
+        FirebaseApi.updateUserInfo(user.id, name, bio, avatarURL|| "");
+        store.updateUser(name,bio,avatarURL || defaultAvatarURL);
         setToggle(false);
     }
     return(
@@ -18,21 +35,23 @@ function Profile({user}:{user: User}){
         <section className="profile">
             <button onClick={() => setToggle(true)}><img src="../../public/settings.svg" alt="logout" /></button>
             <button onClick={FirebaseApi.logout}><img src="../../public/logout.svg" alt="logout" /></button>
-            <img src={user.info.photo} alt={user.info.username} />
+            <img src={user.avatar || defaultAvatarURL} alt={user.username} />
             <section className="aboutMe">
-                <h1>{user.info.username}</h1>
-                {user.info.bio && (
-                <h2>{user.info.bio}</h2>)}
+                <h1>{user.username}</h1>
+                {user.bio && (
+                <h2>{user.bio}</h2>)}
             </section>
         </section>
         <Modal isOpen={toggle} onClose={() => setToggle(false)} title = "Change info">
             <div className="fields">
-                <label>Name</label>
-                <input onChange={(e) => setName(e.target.value)} type="text" />
-                <label>Bio</label>
-                <input onChange={(e) => setBio(e.target.value)} type="text" />
-                <label>Avatar</label>
-                <input onChange={(e) => setAvatarURL(e.target.value)} type="text" />
+                <form className="addCard" onSubmit={changeInfo}>
+                    <label>Name</label>
+                    <input onChange={(e) => setName(e.target.value)} type="text" />
+                    <label>Bio</label>
+                    <input onChange={(e) => setBio(e.target.value)} type="text" />
+                    <label>Avatar</label>
+                    <input onChange={(e) => setAvatarURL(e.target.value)} type="text" />
+                </form>
             </div>
                             
             <button type="submit" className="find">Change</button>

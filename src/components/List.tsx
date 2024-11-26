@@ -1,26 +1,25 @@
 import React, { useState } from "react";
 import BookCard from "./BookCard";
-import BookList from "../models/BookList";
 import {Book} from "../models/Book";
-import { RecomendationList } from "../models/RecommendationList"; 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Scrollbar, Navigation } from 'swiper/modules';
 import BookApi from "../api/BookApi";
-import { useAppStore } from "../models/Store";
+import { useAppStore } from "../store/Store";
 import Modal from "./Modal";
 
 
-function List({list}:{list:BookList|RecomendationList}){
+function List(){
     const [toggle, setToggle] = useState<boolean>(false);
     const [foundBooks, setFoundBooks] = useState<Book[]>([]); //type should be switched to BookList
     let author ="";
     let title = "";
-    function add(){
-        if(list instanceof RecomendationList){
-            list.addBook
+    const store = useAppStore();
+    function add(){ //to change
+        if(store.currentSelectedList === "Recommendations"){
+            //list.addBook
         }
         else{
             setToggle(true);
@@ -44,15 +43,35 @@ function List({list}:{list:BookList|RecomendationList}){
             setFoundBooks(books); //need func to check if it is in other lists
         }
     }
-    function addBook(book:Book){
-        useAppStore.getState().addBookToList(list,book);
+    async function addBook(book:Book){
+        await useAppStore.getState().addBookToList(book);
         setToggle(false);
+    }
+    // needs implementation
+    function addToList(){
+
+    }
+    function changeTheList(){
+
+    }
+    function removeFromList(){
+
     }
     return(
         <>
         <div className="list">
-            {list.bookArray.map((book) => (
-                <BookCard book={book}></BookCard>
+            {store.getBooksOfCurrentList().map((book) => (
+                <BookCard book={book}>
+                    {(store.currentSelectedList === "Recommendations") &&
+                        <button onClick={addToList}>Add</button>
+                    }
+                    {!(store.currentSelectedList === "Recommendations") &&(
+                        <>
+                        <button onClick={changeTheList}>Change</button>
+                        <span onClick={removeFromList}>Remove</span>
+                        </>
+                    )}
+                </BookCard>
             ))}
             <button onClick={add} className="add">+</button>
         </div>
@@ -94,51 +113,6 @@ function List({list}:{list:BookList|RecomendationList}){
             </Swiper>
             )}
         </Modal>
-
-        {/* {toggle && (
-            <div className="modal">
-                <div className="card">
-                    <span className="close" onClick={() => {setToggle(false); setFoundBooks([])}}>&times;</span>
-                    {foundBooks.length===0 && (
-                        <form className="addCard" onSubmit={findBook}>
-                            <h2>Add new book to the list</h2>
-                            <div className="fields">
-                                <label>Author</label>
-                                <input onChange={(e) => author = e.target.value} type="text" />
-                                <label>Title</label>
-                                <input onChange={(e) => title = e.target.value} type="text" />
-                            </div>
-                            
-                            <button type="submit" className="find">Find</button>
-                        </form>
-                    )}
-                    {foundBooks.length>0 &&(
-                        <>
-                        <h2>Found books:</h2>
-                        <Swiper
-                            slidesPerView={3}
-                            spaceBetween={30}
-                            slidesPerGroup={3}
-                            pagination={{
-                                clickable: true,
-                            }}
-                            scrollbar={{
-                                hide: true,
-                              }}
-                              navigation={true}
-                            modules={[Pagination, Scrollbar, Navigation]}
-                            className="mySwiper"
-                        >
-                            {foundBooks.map((book) => (
-                                <SwiperSlide>
-                                    <BookCard book={book}></BookCard>
-                                    <button onClick={() => addBook(book)}>Add</button>
-                                </SwiperSlide>
-                             ))}
-                        </Swiper>
-                        </>)}
-                </div>
-            </div>)} */}
         </>
     );
 }

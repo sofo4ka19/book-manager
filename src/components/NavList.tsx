@@ -1,20 +1,21 @@
-import React from "react";
+import { useAppStore, TypeOfList } from "../store/Store";
 
-function NavList({selected, activeList, listNames}:{selected: (listName:string) => void, activeList:string, listNames: string[]}){
-
-  return (
-    <nav>
+function NavList(){
+    const listNames = ["Recommendations", "Wishlist", "Reading", "Finished"];
+    const store = useAppStore()
+    return (
+        <nav>
             {listNames.map((name) => (
                 <ul 
                     key={name} 
-                    className={`listName ${activeList === name ? "active" : ""}`} 
-                    onClick={() => selected(name)}
+                    className={`listName ${store.currentSelectedList === name ? "active" : ""}`} 
+                    onClick={() => store.setCurrentList(name as TypeOfList)}
                 >
                     {name}
                 </ul>
             ))}
         </nav>
-  );
+    );
 }
 
 export default NavList;

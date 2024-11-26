@@ -1,29 +1,23 @@
-import { useState } from 'react'
 import Profile from './Profile'
-import User from '../models/User';
 import NavList from './NavList';
 import List from './List';
+import { useAppStore } from '../store/Store';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
-  const user = new User(
-    "Sofiia Broiako", "anonym@knu.ua", "Student at Taras Shevchenko National University of Kyiv" 
-  );
-  const[list, setList] = useState(user.lists[0]);
-  const [activeList, setActiveList] = useState<string>("Wishlist");
-  const listNames = ["Recommendations", "Wishlist", "Reading", "Finished"];
-  function transition(name:string){
-    const index = listNames.indexOf(name);
-    if (index !== -1) {
-      const updatedList = user.lists[index];
-      setList(updatedList);
-      setActiveList(name);
-    }
+  const user = useAppStore((state) => state.user);
+  const navigate = useNavigate();
+
+  if (!user) {
+    navigate("/login");
+    return; 
   }
+
   return (
     <>
-      <Profile user={user}/>
-      <NavList selected={transition} activeList={activeList} listNames={listNames} />
-      <List list = {list} />
+      <Profile />
+      <NavList  />
+      <List />
     </>
   )
 }
