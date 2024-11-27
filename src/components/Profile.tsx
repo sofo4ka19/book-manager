@@ -34,7 +34,7 @@ function Profile(){
         <>
         <section className="profile">
             <button onClick={() => setToggle(true)}><img src="../../public/settings.svg" alt="logout" /></button>
-            <button onClick={FirebaseApi.logout}><img src="../../public/logout.svg" alt="logout" /></button>
+            <button onClick={store.logout}><img src="../../public/logout.svg" alt="logout" /></button>
             <img src={user.avatar || defaultAvatarURL} alt={user.username} />
             <section className="aboutMe">
                 <h1>{user.username}</h1>

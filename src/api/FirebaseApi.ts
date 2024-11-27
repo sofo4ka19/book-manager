@@ -200,10 +200,9 @@ export default class FirebaseApi{
                 await updateDoc(userRef, updates);
             }
       }
-      static async logout(){ //to change
+      static async logout(){ 
         try {
             await auth.signOut(); // викликаємо метод для логауту в Firebase
-            useAppStore.setState({ user: null }); // оновлюємо стан користувача в zustand store
         } catch (error) {
             console.error("Logout error:", error); // обробка помилки
         }

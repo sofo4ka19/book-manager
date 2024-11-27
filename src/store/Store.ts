@@ -20,8 +20,8 @@ interface AppState {
   removeBookFromList: (bookId: string) => void;
   loadBookForUser: () => Promise<void>;
   getBooksOfCurrentList: () => Book[];
-  // TODO: Check all username name references of user instance. Should be only name or username. Check firebase for username\name references
   updateUser: (username: string, bio: string, avatar: string) => void;
+  logout:() => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -145,10 +145,16 @@ export const useAppStore = create<AppState>()(
               break;
       }
     }, 
-
+    logout() {
+        FirebaseApi.logout();
+        set(() => ({
+            user: null
+        }));
+    },
     loadBookForUser: async () => {
 
     }
+
 }),
 {name: 'AppStore'}
 ));
