@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { auth } from "./firebase"; // ваш екземпляр firebase
 import Home from "./components/Home"; // головна сторінка
@@ -12,10 +12,13 @@ const App = () => {
   const setUser = useAppStore((state : any) => state.setUser);
   const defaultAvatarURL = "/avatar_default.png";
   const store = useAppStore();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       //place of the code should be changed, because the same is in LoginCard
+      console.log("User from fb api: " + currentUser);
+      
       if(currentUser){
         const userId = currentUser.uid;
         try{
@@ -37,10 +40,13 @@ const App = () => {
           console.error("Error:", error);
       }
       }
+      setIsLoading(false);
     });
     return unsubscribe;
   }, []);
-
+  if (isLoading) {
+    return <div>Loading...</div>;
+}
 
   return (
     <Router>

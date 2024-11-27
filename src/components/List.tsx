@@ -94,7 +94,8 @@ function List(){
             ))}
             <button onClick={add} className="add">+</button>
         </div>
-        <Modal isOpen={toggle} onClose={() => setToggle(false)} title={(foundBooks.length==0)? "Add new book to the list": "Found books:"}>
+        <Modal isOpen={toggle} onClose={() => {setToggle(false) 
+            setFoundBooks([])}} title={(foundBooks.length==0)? "Add new book to the list": "Found books:"}>
             {foundBooks.length===0 && (
                 <form className="addCard" onSubmit={findBook}>
                     <div className="fields">
