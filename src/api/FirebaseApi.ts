@@ -31,13 +31,25 @@ export default class FirebaseApi{
 
         if (userSnap.exists()) {
         const userData: UserTemp = userSnap.data() as UserTemp;
+         // Отримуємо референс до підколекції "lists"
+        const listsRef = collection(userDoc, "lists");
+
+        // Зчитуємо списки книг
+        const lists = ["wishlist", "reading", "finished"];
+        const userLists: { [key: string]: string[] } = {};
+
+        for (const listName of lists) {
+            const listDoc = doc(listsRef, listName);
+            const listSnap = await getDoc(listDoc);
+            userLists[listName] = listSnap.exists() ? listSnap.data().books || [] : [];
+        }
 
         // Якщо список не існує, створіть його як порожній
         return {
             ...userData,
-            wishlist: userData.wishlist || [],
-            readingList: userData.readingList || [],
-            haveRead: userData.haveRead || []
+            wishlist: userLists["wishlist"],
+            readingList: userLists["reading"],
+            haveRead: userLists["finished"],
         };
         } else {
             return null;
@@ -159,45 +171,8 @@ export default class FirebaseApi{
 
         console.log("Book not found.");
         return null; 
-        // if (book.isbn) { 
-        //     const bookSnap = await getDoc(bookRef);
-        //     if (bookSnap.exists()) {
-        //       bookId = bookSnap.id;
-        //     }
-        //   }
-      
-        //   // Якщо ISBN не знайдено, перевіряємо за назвою та автором
-        //   if (!bookId && book.title) {
-        //     const booksRef = collection(db, "books");
-            
-        //     // Якщо автори зазначені, шукаємо за автором та назвою
-        //     if (book.authors && book.authors.length > 0) {
-        //       const q = query(
-        //         booksRef,
-        //         where("title", "==", book.title),
-        //         where("authors", "array-contains", book.authors[0])  // Шукаємо по першому автору
-        //       );
-      
-        //       const querySnapshot = await getDocs(q);
-        //       if (!querySnapshot.empty) {
-        //         bookId = querySnapshot.docs[0].id;
-        //       }
-        //     } else {
-        //       // Якщо автори не зазначені, шукаємо лише по назві
-        //       const q = query(
-        //         booksRef,
-        //         where("title", "==", book.title)
-        //       );
-      
-        //       const querySnapshot = await getDocs(q);
-        //       if (!querySnapshot.empty) {
-        //         bookId = querySnapshot.docs[0].id;
-        //       }
-        //     }
-        //   }
-      
-        //   return bookId;
       }
+
       static async loadBooksByIds(bookIds: string[]):Promise<Book[]>{ //add polymorphysm to search with ratings
         const books: Book[] = [];
         for (const bookId of bookIds) {
@@ -210,6 +185,7 @@ export default class FirebaseApi{
         }
         return books;
       }
+
       static async updateUserInfo(userId:string, name:string, bio: string|null, avatarUrl: string){
         const userRef = doc(db, "users", userId);
     
