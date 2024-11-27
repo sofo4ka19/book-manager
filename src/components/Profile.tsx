@@ -22,11 +22,12 @@ function Profile(){
     const defaultAvatarURL = "/avatar_default.png";
 
     function changeInfo(){
+        console.log(name, bio, avatarURL);
         if(!user){
             navigate("/login")
             return;
         }
-        FirebaseApi.updateUserInfo(user.id, name, bio, avatarURL|| "");
+        FirebaseApi.updateUserInfo(user.id, name, bio, (!avatarURL || avatarURL==defaultAvatarURL)?(""):avatarURL);
         store.updateUser(name,bio,avatarURL || defaultAvatarURL);
         setToggle(false);
     }
@@ -46,15 +47,15 @@ function Profile(){
             <div className="fields">
                 <form className="addCard" onSubmit={changeInfo}>
                     <label>Name</label>
-                    <input onChange={(e) => setName(e.target.value)} type="text" />
+                    <input onChange={(e) => setName(e.target.value)} type="text" placeholder={name} />
                     <label>Bio</label>
-                    <input onChange={(e) => setBio(e.target.value)} type="text" />
+                    <input onChange={(e) => setBio(e.target.value)} type="text" placeholder={bio} />
                     <label>Avatar</label>
-                    <input onChange={(e) => setAvatarURL(e.target.value)} type="text" />
+                    <input onChange={(e) => setAvatarURL(e.target.value)} type="text" placeholder={avatarURL || "default"} />
+                    <button type="submit" className="find">Change</button>
                 </form>
             </div>
                             
-            <button type="submit" className="find">Change</button>
         </Modal>
         </>
     );

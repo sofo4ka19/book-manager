@@ -183,10 +183,10 @@ export default class FirebaseApi{
         const userRef = doc(db, "users", userId);
     
             // Формуємо дані для оновлення
-            const updates: { name?: string; bio?: string|null; avatar?: string } = {};
+            const updates: { username?: string; bio?: string|null; avatar?: string } = {};
             
             if (name && name.length > 0) {
-                updates.name = name;
+                updates.username = name;
             }
             if (bio && bio.length > 0) {
                 updates.bio = bio;

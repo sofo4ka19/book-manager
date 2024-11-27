@@ -41,12 +41,12 @@ export const useAppStore = create<AppState>()(
       const userFromStore = {...get().user};
 
       const user: UserTemp = {
-          username: username,
-          bio: bio,
-          avatar: avatar,
+          ...userFromStore,
+          username: (username && username!="")?(username):userFromStore.username!,
+          bio: (bio && bio!="")?(bio):userFromStore.bio!,
+          avatar: (avatar && avatar!="")?(avatar):userFromStore.avatar!,
           id: userFromStore.id!,
           email: userFromStore.email!,
-          ...userFromStore
 
       }
 
