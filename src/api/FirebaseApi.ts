@@ -115,27 +115,18 @@ export default class FirebaseApi{
           }
         }
       }
-    
+      //do we need it?
       // Load books for a user from a specific list
-      static async loadUserBooks(userId: string, listName: string) {
+      static async loadUserBooks(userId: string, listName: string) : Promise<Book[]> {
         const listRef = doc(db, "users", userId, "lists", listName);
         const listSnap = await getDoc(listRef);
-    
-        if (listSnap.exists()) {
-          const bookIds = listSnap.data().books;
-          const books = [];
-    
-          for (const bookId of bookIds) {
-            const bookRef = doc(db, "books", bookId);
-            const bookSnap = await getDoc(bookRef);
-            if (bookSnap.exists()) {
-              books.push(bookSnap.data());
-            }
-          }
-          return books;
+
+        if (!listSnap.exists()) {
+          return [];
         }
-        return [];
+        return await FirebaseApi.loadBooksByIds(listSnap.data().books)
       }
+        
     
       // Check if a book already exists in the Firestore books collection
       static async checkIfBookExists(book: Book): Promise<string | null> {
@@ -174,15 +165,17 @@ export default class FirebaseApi{
       }
 
       static async loadBooksByIds(bookIds: string[]):Promise<Book[]>{ //add polymorphysm to search with ratings
-        const books: Book[] = [];
-        for (const bookId of bookIds) {
-            const bookRef = doc(db, "books", bookId);
-            const bookSnap = await getDoc(bookRef);
-            if (bookSnap.exists()) {
-            const bookData = bookSnap.data() as Book;
-            books.push(bookData);
-            }
-        }
+        if(!bookIds) return [];
+        const bookPromises = bookIds.map(async (bookId:string) => {
+          const bookRef = doc(db, "books", bookId);
+          const bookSnap = await getDoc(bookRef);
+  
+          if (bookSnap.exists()) {
+              return { id: bookId, ...bookSnap.data() }; // Додаємо id до даних книги
+          }
+          return null; // Якщо книга не знайдена
+        });
+        const books = (await Promise.all(bookPromises)).filter((book): book is Book => book !== null);
         return books;
       }
 
@@ -207,7 +200,7 @@ export default class FirebaseApi{
                 await updateDoc(userRef, updates);
             }
       }
-      static async logout(){
+      static async logout(){ //to change
         try {
             await auth.signOut(); // викликаємо метод для логауту в Firebase
             useAppStore.setState({ user: null }); // оновлюємо стан користувача в zustand store
