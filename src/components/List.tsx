@@ -54,22 +54,21 @@ function List(){
         console.log(store.user)
     }
     // needs implementation
-    function addToList(){
-
+    async function addToList(){
+        
     }
     async function changeTheList(toList:string){
         if(!activeBook){
             return; //error
         }
         await store.removeBookFromList(activeBook.id);
-        console.log("success") 
         store.setCurrentList(toList as TypeOfList)
         await store.addBookToList(activeBook);
         setActiveBook(null);
         setToggle2(false);
     }
-    function removeFromList(){
-
+    async function removeFromList(book:Book){
+        await store.removeBookFromList(book.id);
     }
     return(
         <>
@@ -86,7 +85,9 @@ function List(){
                             setActiveBook(book);
                             }}>
                                 Change</button>
-                        <span onClick={removeFromList}>Remove</span>
+                        <span onClick={() => {
+                            removeFromList(book);
+                            }}>Remove</span>
                         </>
                     )}
                 </BookCard>

@@ -59,11 +59,16 @@ export default class FirebaseApi{
             genres: book.genres,
             isbn: book.isbn || "",
             rate: book.rate || "",
-            language: book.language || ""
+            language: book.language || "",
+            users: [userId],
           });
           newBookId = bookRef.id;
         } else {
           newBookId = bookId;
+          const bookRef = doc(db, "books", newBookId);
+          await updateDoc(bookRef, {
+            users: arrayUnion(userId), // Додаємо ID користувача до списку
+        });
         }
         book.id = newBookId;
         // Add the book to the user's list
