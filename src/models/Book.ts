@@ -7,5 +7,5 @@ export interface Book{
     imageUrl: string;
     rate: number|null;
     language: string|null;
-    myRate?: number|null;
+    myRate?: number;
 }

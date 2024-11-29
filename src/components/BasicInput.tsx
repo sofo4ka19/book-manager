@@ -4,7 +4,7 @@ import {ChangeEvent} from "react";
 interface BasicInputProps {
     type?: string;
     placeholder?: string;
-    value: string;
+    value: string|number;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     required?: boolean;
 }

@@ -11,7 +11,7 @@ export interface UserTemp{
     avatar: string|null;
     wishlist?: string[];
     readingList?: string[];
-    haveRead?: string[];
+    haveRead?: { id: string, myRate: number }[];
 }
 export default class User{
     constructor(

@@ -10,6 +10,7 @@ import BookApi from "../api/BookApi";
 import { useAppStore } from "../store/Store";
 import Modal from "./Modal";
 import { TypeOfList } from "../store/Store";
+import BasicInput from "./BasicInput";
 
 
 function List(){
@@ -17,19 +18,13 @@ function List(){
     const [toggle, setToggle] = useState<boolean>(false);
     const [foundBooks, setFoundBooks] = useState<Book[]>([]); 
     const [toggle2, setToggle2] = useState<boolean>(false);
+    const [toggle3, setToggle3] = useState<boolean>(false);
+    const [mark, setMark] = useState<number|"">("");
     const [activeBook, setActiveBook] = useState<Book|null>(null);
     let author ="";
     let title = "";
     const store = useAppStore();
-    function add(){ //to change
-        if(store.currentSelectedList === "Recommendations"){
-            //list.addBook
-        }
-        else{
-            setToggle(true);
-        }
-    } 
-
+    
     async function findBook(e: React.FormEvent){
         e.preventDefault();
         if(author==="" && title===""){
@@ -53,22 +48,40 @@ function List(){
         setFoundBooks([]);
         console.log(store.user)
     }
-    // needs implementation
-    async function addToList(){
-        
-    }
-    async function changeTheList(toList:string){
+    async function changeTheList(toList:string, myRate?:number){
         if(!activeBook){
             return; //error
         }
-        await store.removeBookFromList(activeBook.id);
+        if(!(store.currentSelectedList === "Recommendations")){
+            await store.removeBookFromList(activeBook.id, activeBook.myRate);
+            console.log(activeBook.myRate)
+        }
+        if(store.currentSelectedList=="Finished" && toList!="Finished"){
+            delete activeBook.myRate;
+        }
         store.setCurrentList(toList as TypeOfList)
         await store.addBookToList(activeBook);
         setActiveBook(null);
         setToggle2(false);
     }
     async function removeFromList(book:Book){
-        await store.removeBookFromList(book.id);
+        await store.removeBookFromList(book.id, book.myRate);
+    }
+    function validateMark(value:string){
+        const num = Number(value);
+        if (num >= 0 && num <= 5) return num; // Correct value
+        return ""; //uncorrect value
+    }
+    async function handleMark(){
+        if(mark==""){
+            alert("Please enter a valid mark between 0 and 5.");
+            return;
+        }
+        if(activeBook) activeBook.myRate = mark;
+        
+        await changeTheList("Finished");
+        setToggle3(false);
+        setMark("");
     }
     return(
         <>
@@ -76,7 +89,10 @@ function List(){
             {store.getBooksOfCurrentList().map((book) => (
                 <BookCard book={book}>
                     {(store.currentSelectedList === "Recommendations") &&
-                        <button onClick={addToList}>Add</button>
+                        <button onClick={() => {
+                            setToggle2(true);
+                            setActiveBook(book);
+                            }}>Add</button>
                     }
                     {!(store.currentSelectedList === "Recommendations") &&(
                         <>
@@ -92,7 +108,7 @@ function List(){
                     )}
                 </BookCard>
             ))}
-            <button onClick={add} className="add">+</button>
+            {!(store.currentSelectedList === "Recommendations") && <button onClick={() => setToggle(true)} className="add">+</button>}
         </div>
         <Modal isOpen={toggle} onClose={() => {setToggle(false) 
             setFoundBooks([])}} title={(foundBooks.length==0)? "Add new book to the list": "Found books:"}>
@@ -146,9 +162,15 @@ function List(){
                 <span 
                     key={list} 
                     className={`listName ${store.currentSelectedList === list ? "hidden" : ""}`}
-                    onClick={() => changeTheList(list)}
+                    onClick={() => (list === "Finished")?(setToggle3(true)) : changeTheList(list)}
                 >{list}</span>
             ))}
+            {toggle3 && (
+                <div>
+                    <BasicInput type="number" placeholder="enter your mark from 0 to 5" value={mark} onChange={(e: any) => setMark(validateMark(e.target.value))}></BasicInput>
+                    <button onClick={handleMark}>ok</button>
+                </div>
+                )}
         </Modal>
         </>
     );

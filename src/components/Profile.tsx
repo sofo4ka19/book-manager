@@ -47,9 +47,9 @@ function Profile(){
             <div className="fields">
                 <form className="addCard" onSubmit={changeInfo}>
                     <label>Name</label>
-                    <input onChange={(e) => setName(e.target.value)} type="text" placeholder={name} />
+                    <input onChange={(e) => setName(e.target.value)} type="text" placeholder={name} value={name} />
                     <label>Bio</label>
-                    <input onChange={(e) => setBio(e.target.value)} type="text" placeholder={bio} />
+                    <input onChange={(e) => setBio(e.target.value)} type="text" placeholder={bio} value={bio} />
                     <label>Avatar</label>
                     <input onChange={(e) => setAvatarURL(e.target.value)} type="text" placeholder={avatarURL || "default"} />
                     <button type="submit" className="find">Change</button>

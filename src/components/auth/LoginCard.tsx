@@ -37,7 +37,7 @@ const LoginCard: React.FC = () => {
             } else {
                 store.wishlist = await FirebaseApi.loadBooksByIds(userData.wishlist || []);
                 store.currentlyReadingList = await FirebaseApi.loadBooksByIds(userData.readingList || []);
-                store.finishedList = await FirebaseApi.loadBooksByIds(userData.haveRead || []);
+                store.finishedList = await FirebaseApi.loadBooksWithRating(userData.haveRead || []);
                 userData.id = userId;
                 if(!userData.avatar) userData.avatar = defaultAvatarURL;
                 setUser(userData);

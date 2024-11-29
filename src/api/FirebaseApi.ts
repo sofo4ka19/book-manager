@@ -25,7 +25,7 @@ export default class FirebaseApi{
         }
       }
 
-      static async getUserData(userId:string) : Promise<UserTemp|null>{
+      static async getUserData(userId:string) : Promise<UserTemp|null>{ //perhaps should be updated
         const userDoc = doc(db, "users", userId);
         const userSnap = await getDoc(userDoc);
 
@@ -35,22 +35,37 @@ export default class FirebaseApi{
         const listsRef = collection(userDoc, "lists");
 
         // Зчитуємо списки книг
-        const lists = ["wishlist", "reading", "finished"];
-        const userLists: { [key: string]: string[] } = {};
+        //const lists = ["wishlist", "reading", "finished"];
+          //const userLists: { [key: string]: string[]|{ id: string, myRate: number }[] } = {};
 
-        for (const listName of lists) {
-            const listDoc = doc(listsRef, listName);
-            const listSnap = await getDoc(listDoc);
-            userLists[listName] = listSnap.exists() ? listSnap.data().books || [] : [];
-        }
+          // for (const listName of lists) {
+          //     const listDoc = doc(listsRef, listName);
+          //     const listSnap = await getDoc (listDoc);
+          //     // if(listName=="finished"){
+          //     //   userLists[listName] = listSnap.exists() ? (listSnap.data().books || []).map((book: any) => ({
+          //     //     id: book.id,
+          //     //     myRate: book.myRate ?? 0, // Забезпечуємо наявність myRate
+          //     //   })) : [{}];
+          //     // }
+          //     // else{
+          //       userLists[listName] = listSnap.exists() ? listSnap.data().books || [] : [];
+          //     // }
+              
+          // }
+          const wishlistSnap = await getDoc(doc(listsRef, "wishlist"));
+          const wishlist = wishlistSnap.exists()? wishlistSnap.data().books : [];
+          const readingSnap = await getDoc(doc(listsRef, "reading"));
+          const reading = readingSnap.exists()? readingSnap.data().books : [];
+          const finishedSnap = await getDoc(doc(listsRef, "finished"));
+          const finished = finishedSnap.exists()? finishedSnap.data().books : [];
 
-        // Якщо список не існує, створіть його як порожній
-        return {
-            ...userData,
-            wishlist: userLists["wishlist"],
-            readingList: userLists["reading"],
-            haveRead: userLists["finished"],
-        };
+          // Якщо список не існує, створіть його як порожній
+          return {
+              ...userData,
+              wishlist: wishlist,
+              readingList: reading,
+              haveRead: finished,
+          };
         } else {
             return null;
         }
@@ -85,35 +100,52 @@ export default class FirebaseApi{
         book.id = newBookId;
         // Add the book to the user's list
         const userListRef = doc(db, "users", userId, "lists", listName.toLowerCase());
-        await updateDoc(userListRef, {
-          books: arrayUnion(newBookId), // Adds the book id to the user's list
-        });
+        if(listName.toLowerCase()=="finished" && book.myRate){
+          await updateDoc(userListRef, {
+            books: arrayUnion({id: newBookId, myRate: book.myRate}), // Adds the book id and mark to the user's finished list
+          });
+        }
+        else{
+          await updateDoc(userListRef, {
+            books: arrayUnion(newBookId), // Adds the book id to the user's list
+          });
+        }
       }
     
       // Remove book from user's list and from books collection if necessary
-      static async removeBookFromUserList(userId: string, listName: string, bookId: string) {
+      static async removeBookFromUserList(userId: string, listName: string, bookId: string, rate?:number) {
         const userListRef = doc(db, "users", userId, "lists", listName.toLowerCase());
         // Remove book from the user's list
-        await updateDoc(userListRef, {
-          books: arrayRemove(bookId), // Removes the book id from the user's list
-        });
+        if(listName=="Finished" && rate){
+          await updateDoc(userListRef, {
+            books: arrayRemove({id: bookId, myRate: rate}), // Removes the book id from the user's list
+          });
+        }
+        else{
+          await updateDoc(userListRef, {
+            books: arrayRemove(bookId), // Removes the book id from the user's list
+          });
+        }
     
         // Optionally, remove the book from the books collection if no user references it
-        const bookRef = doc(db, "books", bookId);
-        const bookSnap = await getDoc(bookRef);
-        if (bookSnap.exists()) {
-          const bookData = bookSnap.data();
-          const bookUsers = bookData.users || [];
-          const updatedUsers = bookUsers.filter((user: string) => user !== userId);
-    
-          if (updatedUsers.length === 0) {
-            // Delete the book from the books collection if no users reference it
-            await deleteDoc(bookRef);
-          } else {
-            // Update book's user references
-            await updateDoc(bookRef, { users: updatedUsers });
-          }
+        //if(!toChange){
+          const bookRef = doc(db, "books", bookId);
+          const bookSnap = await getDoc(bookRef);
+          if (bookSnap.exists()) {
+            const bookData = bookSnap.data();
+            const bookUsers = bookData.users || [];
+            const updatedUsers = bookUsers.filter((user: string) => user !== userId);
+      
+            if (updatedUsers.length === 0) {
+              // Delete the book from the books collection if no users reference it
+              await deleteDoc(bookRef);
+            } else {
+              // Update book's user references
+              await updateDoc(bookRef, { users: updatedUsers });
+            }
+          //}
         }
+        
       }
       //do we need it?
       // Load books for a user from a specific list
@@ -130,8 +162,6 @@ export default class FirebaseApi{
     
       // Check if a book already exists in the Firestore books collection
       static async checkIfBookExists(book: Book): Promise<string | null> {
-        //check this logic
-        //let bookId: string | null = null;
         const booksRef = collection(db, "books"); 
         let conditions = [];
         // Додаємо умову для ISBN, якщо він є
@@ -177,6 +207,20 @@ export default class FirebaseApi{
         });
         const books = (await Promise.all(bookPromises)).filter((book): book is Book => book !== null);
         return books;
+      }
+      static async loadBooksWithRating(books:{ id: string, myRate: number }[]):Promise<Book[]>{ //add polymorphysm to search with ratings
+        if(!books || books.length === 0) return [];
+        const bookPromises = books.map(async (book) => {
+          const bookRef = doc(db, "books", book.id);
+          const bookSnap = await getDoc(bookRef);
+  
+          if (bookSnap.exists()) {
+              return { id: book.id, ...bookSnap.data(), myRate: book.myRate }; 
+          }
+          return null; // Якщо книга не знайдена
+        });
+        const result = (await Promise.all(bookPromises)).filter((book): book is Book & { myRate: number } => book !== null);
+        return result;
       }
 
       static async updateUserInfo(userId:string, name:string, bio: string|null, avatarUrl: string){

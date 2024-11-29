@@ -16,8 +16,8 @@ interface AppState {
 
   setCurrentList: (list: TypeOfList) => void;
   setUser: (user: UserTemp|null) => void;
-  addBookToList: (book: Book) => void;
-  removeBookFromList: (bookId: string) => void;
+  addBookToList: (book: Book, myRate?:number) => void;
+  removeBookFromList: (bookId: string, rate?:number) => void;
   loadBookForUser: () => Promise<void>;
   getBooksOfCurrentList: () => Book[];
   updateUser: (username: string, bio: string, avatar: string) => void;
@@ -119,10 +119,11 @@ export const useAppStore = create<AppState>()(
         }
     },
 
-    removeBookFromList: async (bookId) => {
+    removeBookFromList: async (bookId, rate?) => {
       const user = get().user;
       const currentSelectedList = get().currentSelectedList
-      if (user && currentSelectedList) await FirebaseApi.removeBookFromUserList(user.id, currentSelectedList, bookId)
+      console.log(bookId, rate);
+      if (user && currentSelectedList) await FirebaseApi.removeBookFromUserList(user.id, currentSelectedList, bookId, rate)
       // TODO: check if call is successful
 
       switch (get().currentSelectedList) {
