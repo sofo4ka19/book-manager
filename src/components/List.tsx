@@ -15,40 +15,14 @@ import BasicInput from "./BasicInput";
 
 function List(){
     const listNames = ["Wishlist", "Reading", "Finished"];
-    const [toggle, setToggle] = useState<boolean>(false);
-    const [foundBooks, setFoundBooks] = useState<Book[]>([]); 
     const [toggle2, setToggle2] = useState<boolean>(false);
     const [toggle3, setToggle3] = useState<boolean>(false);
     const [mark, setMark] = useState<number|"">("");
     const [activeBook, setActiveBook] = useState<Book|null>(null);
-    let author ="";
-    let title = "";
     const store = useAppStore();
     
-    async function findBook(e: React.FormEvent){
-        e.preventDefault();
-        if(author==="" && title===""){
-            alert("Please enter either an author or a title.");
-            return;
-        }//error modal
-        else{ 
-            let authors = (author!="")? author.split(', '):null;
-            const books = await BookApi.searchBooks(title, authors, null);
-            if(books.length<=0){
-                alert("No books were found")
-                setToggle(false);
-                return;
-            }
-            setFoundBooks(books); //need func to check if it is in other lists
-        }
-    }
-    async function addBook(book:Book){
-        await store.addBookToList(book);
-        setToggle(false);
-        setFoundBooks([]);
-        console.log(store.user)
-    }
-    async function changeTheList(toList:string, myRate?:number){
+    
+    async function changeTheList(toList:string){
         if(!activeBook){
             return; //error
         }
@@ -108,32 +82,8 @@ function List(){
                     )}
                 </BookCard>
             ))}
-            {!(store.currentSelectedList === "Recommendations") && <button onClick={() => setToggle(true)} className="add">+</button>}
         </div>
-        <Modal isOpen={toggle} onClose={() => {setToggle(false) 
-            setFoundBooks([])}} title={(foundBooks.length==0)? "Add new book to the list": "Found books:"}>
-            {foundBooks.length===0 && (
-                <form className="addCard" onSubmit={findBook}>
-                    <div className="fields">
-                                {/* perhaps should make it used useState */}
-                                <label>Author</label>
-                                <input onChange={(e) => author = e.target.value} type="text" />
-                                <label>Title</label>
-                                <input onChange={(e) => title = e.target.value} type="text" />
-                            </div>
-                            {/* perhaps should be transformed to prop */}
-                            <button type="submit" className="find">Find</button> 
-                </form>
-            )}
-            {foundBooks.length>0 &&(
-                foundBooks.map((book) => (
-                    <div>
-                        <BookCard book={book}>
-                            <button style={{marginRight: '30px'}} onClick={() => addBook(book)}>Add</button>
-                        </BookCard>
-                    </div>
-                ))
-                // needs to be set
+                {/* // needs to be set
             //     <Swiper
             //     slidesPerView={3}
             //     spaceBetween={30}
@@ -154,9 +104,7 @@ function List(){
             //             <button onClick={() => addBook(book)}>Add</button>
             //         </SwiperSlide>
             //      ))}
-            // </Swiper>
-            )}
-        </Modal>
+            // </Swiper> */}
         <Modal isOpen={toggle2} onClose={() => setToggle2(false)} title="Choose the list">
             {listNames.map((list) => (
                 <span 
