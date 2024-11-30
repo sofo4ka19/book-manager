@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Unicase:wght@300;400;500;600;700&family=Great+Vibes&display=swap');
+
 *{
   padding: 0;
   margin: 0;
-  color: #452F24;
+  color: var(--textColor);
 }
 #root {
   /* max-width: 1280px; */
@@ -12,28 +13,85 @@
   text-align: center;
   display: flex;
   flex-wrap: wrap;
-  font-family: "Great Vibes", cursive;
+  font-family: var(--readFont);
   font-weight: 400;
   font-style: normal;
   background-color: #CCC1BC;
   min-height: 100vh;
 }
-
-
+div{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+}
+h1{
+  font-size: 100px;
+  width: 45%;
+  line-height: 1.25em;
+  font-family: var(--graficFont);
+}
+input{
+  background: var(--lightColor);
+  border-radius: 20px;
+  font-size: 28px;
+  padding: 10px 15px;
+  border: none;
+}
+label{
+  text-align: left;
+  font-size: 30px;
+}
 button{
   width: 250px;
-  height: 50px;
-  background-color: #76221E;
+  padding: 10px;
+  background-color: var(--accentColor);
+  border: none;
   border-radius: 20px;
-  /* color: beige; */
-  /* border-color: #374C4A; */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 35px;
-  color: #CCC1BC;
-  font-family: "Great Vibes", cursive;
+  font-size: 30px;
+  color: var(--lightColor);
+  font-family: var(--readFont);
+  cursor: pointer;
 }
+.additional{
+  background-color: rgba(0, 0, 0, 0);
+  color: var(--textColor);
+  font-size: 24px;
+  width: auto;
+  height: auto;
+  padding: 0;
+}
+
+/* auth page */
+.enter{
+  width: 100%;
+  height: 100vh;
+  background: var(--middleColor1);
+}
+.enter h2{
+  font-weight: 400;
+  margin-bottom: 28px;
+}
+.enter div{
+  width: 45%;
+  flex-direction: column;
+  margin-top: 28px;
+}
+.enter input{
+  width: 75%;
+  margin-bottom: 20px;
+}
+.enter label{
+  width: calc(75% + 30px);
+}
+.auth{
+  margin: 20px 0;
+}
+
+
 .list{
   width: 100%;
   min-height: 50vh;
@@ -140,16 +198,6 @@ main{
   width: 100%;
   display: flex;
   justify-content: space-around;
-}
-label{
-  font-size: 36px;
-}
-input{
-  width: 30%;
-  height: 50px;
-  font-size: 28px;
-  border-radius: 50px;
-  padding: 5px 20px;
 }
 h2{
   width: 100%;

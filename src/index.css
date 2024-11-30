@@ -12,6 +12,15 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+:root{
+  --accentColor: #76221E;
+  --lightColor: #CCC1BC;
+  --middleColor1: #7D604F;
+  --middleColor2: #95766C;
+  --textColor: #452F24;
+  --graficFont: "Great Vibes", cursive;
+  --readFont: "Cormorant Unicase", serif;
+}
 
 a {
   font-weight: 500;
@@ -30,10 +39,7 @@ body {
   min-height: 100vh; 
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+
 
 /* button {
   border-radius: 8px;

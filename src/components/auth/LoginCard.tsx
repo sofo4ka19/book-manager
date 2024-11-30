@@ -56,45 +56,48 @@ const LoginCard: React.FC = () => {
 
     const handlePasswordReset = async () => {
         if (!email) {
-            alert("Будь ласка, введіть email!");
+            alert("Please, enter the email");
             return;
         }
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("Інструкції для відновлення пароля відправлені на вашу пошту.");
+            alert("Instructions for reseting the password was send to your email");
         } catch (error) {
-            console.error("Помилка при відновленні пароля:", error);
+            console.error("Error during reseting the password:", error);
         }
     };
 
 
     return (
 
-        <div>
+        <div className="enter">
             <h1>Personal Book Manager Online</h1>
-            <h2>Authorisation</h2>
-            <BasicInput
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e: any) => setEmail(e.target.value)}
-                required = {true}
-            />
-            <BasicInput
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e: any) => setPassword(e.target.value)}
-                required= {true}
-            />
+            <div>
+                <h2>Authorisation</h2>
+                <label>Email</label>
+                <BasicInput
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e: any) => setEmail(e.target.value)}
+                    required = {true}
+                />
+                <label>Password</label>
+                <BasicInput
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e: any) => setPassword(e.target.value)}
+                    required= {true}
+                />
 
 
-            <button onClick={handleAuth}>Login</button>
-            <button onClick={handlePasswordReset}>Forgot the password</button>
-            <button onClick={() => navigate("/register")}>
-                I don't have an account
-            </button>
-
+                <button className="auth" onClick={handleAuth}>Login</button>
+                <button className="additional" onClick={handlePasswordReset}>Forgot the password</button>
+                <button className="additional" onClick={() => navigate("/register")}>
+                    I don't have an account
+                </button>
+            </div>
         </div>
     )
 }

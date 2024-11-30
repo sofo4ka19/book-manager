@@ -40,44 +40,46 @@ const RegisterCard: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="enter">
       <h1>Personal Book Manager Online</h1>
-      <h2>Registration</h2>
-      <BasicInput
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required={true}
-      />
-      <BasicInput
-        type="text"
-        placeholder="Bio (optional)"
-        value={bio}
-        onChange={(e) => setBio(e.target.value)}
-      />
-      <BasicInput
-        type="text"
-        placeholder="Avatar URL (optional)"
-        value={avatarURL}
-        onChange={(e) => setAvatarURL(e.target.value)}
-      />
-      <BasicInput
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required={true}
-      />
-      <BasicInput
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required={true}
-      />
-      <button onClick={handleAuth}>Register</button>
-      <button onClick={() => navigate("/login")}>I don't have an account</button>
+      <div>
+        <h2>Registration</h2>
+        <BasicInput
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required={true}
+        />
+        <BasicInput
+          type="text"
+          placeholder="Bio (optional)"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+        />
+        <BasicInput
+          type="text"
+          placeholder="Avatar URL (optional)"
+          value={avatarURL}
+          onChange={(e) => setAvatarURL(e.target.value)}
+        />
+        <BasicInput
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required={true}
+        />
+        <BasicInput
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required={true}
+        />
+        <button className="auth" onClick={handleAuth}>Register</button>
+        <button className="additional" onClick={() => navigate("/login")}>I have an account</button>
+        </div>
     </div>
   );
 };
