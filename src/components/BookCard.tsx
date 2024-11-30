@@ -11,11 +11,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, children }) => { //add myRate
     const [isOpen, setIsOpen] = useState<boolean>(false);
     return (
     <>
-      <div className="book-card">
-        <img src={book.imageUrl || "../../public/bookCover_default"} alt={book.title} className="book-cover" />
+      <div className="bookCard">
+        <img onClick={() => setIsOpen(true)} src={book.imageUrl || "../../public/bookCover_default"} alt={book.title} className="book-cover" />
         <h3>{book.title}</h3>
-        <p>{book.authors ? book.authors.join(', ') : "Unknown author"}</p>
-        <div className="book-card-actions">{children}</div>
+        {/* <p>{book.authors ? book.authors.join(', ') : "Unknown author"}</p> */}
+        <div className="booCard-actions">{children}</div>
       </div>
       <Modal isOpen = {isOpen} onClose={() => setIsOpen(false)} title = {book.title}>
             {/* perhaps should add more info */}

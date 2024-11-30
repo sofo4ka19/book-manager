@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import BookCard from "./BookCard";
 import {Book} from "../models/Book";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -6,7 +6,6 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Scrollbar, Navigation } from 'swiper/modules';
-import BookApi from "../api/BookApi";
 import { useAppStore } from "../store/Store";
 import Modal from "./Modal";
 import { TypeOfList } from "../store/Store";

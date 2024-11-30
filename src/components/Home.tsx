@@ -14,11 +14,11 @@ function Home() {
   }
 
   return (
-    <>
+    <div className='home'>
       <Profile />
       <NavList  />
       <List />
-    </>
+    </div>
   )
 }
 

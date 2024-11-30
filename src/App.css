@@ -53,6 +53,11 @@ button{
   font-family: var(--readFont);
   cursor: pointer;
 }
+.home{
+  flex-direction: column;
+  min-height: 100vh;
+}
+/* change to span?? */
 .additional{
   background-color: rgba(0, 0, 0, 0);
   color: var(--textColor);
@@ -100,25 +105,27 @@ button{
   align-items: flex-start;
 }
 .profile h1{
-  font-size: 96px;
+  font-size: 85px;
 }
 .avatar{
   border-radius: 500px;
-  width: 200px;
+  width: 10%;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
 }
 .aboutMe{
   width: 60%;
   text-align: left;
   justify-content: flex-start;
+  padding-top: 5px;
 }
 .aboutMe h2{
-  font-size: 36px;
-  font-weight: 500;
+  font-size: 32px;
+  font-weight: 400;
 }
 .settings{
   width: 7%;
   justify-content: space-between;
+  padding-top: 5px;
 }
 .iconButton{
   background-color: rgba(0, 0, 0, 0);
@@ -153,7 +160,8 @@ nav .active{
 }
 .add{
   background-color: rgba(0, 0, 0, 0);
-  width: auto;
+  width: 15%;
+  justify-content: flex-end;
   font-weight: bolder;
   color: var(--textColor);
   font-size: 42px;
@@ -161,18 +169,49 @@ nav .active{
   padding-bottom: 5px;
 }
 
+/* list + book card*/
 .list{
   width: 100%;
-  min-height: 50vh;
-  height: 100%;
-  flex-grow: 2;
+  flex-grow: 1;
+}
+.list .bookCard{
+  width: 22%;
+}
+.bookCard{
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+.bookCard img{
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
+  height: 200px;
+  cursor: pointer;
+}
+.bookCard h3{
+  font-family: var(--graficFont);
+  font-size: 38px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-top: 10px;
+  height: 80px;
+}
+.booCard-actions{
+  width: 60%;
+}
+.bookCard button{
+  margin-top: 15px;
+  width: 100%;
+  font-size: 24px;
+}
+.bookCard span{
+  color: var(--accentColor);
+}
+span{
+  margin-top: 5px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 
-.features{
-  display: flex;
-  justify-content: space-between;
-}
 .icon{
   /* height: 45px; */
   width: 45px;
@@ -184,11 +223,6 @@ nav .active{
   display: flex;
   align-items: center;
   margin-left: 7px;
-}
-main{
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .modal{
