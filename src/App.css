@@ -15,7 +15,6 @@
   flex-wrap: wrap;
   font-family: var(--readFont);
   font-weight: 400;
-  font-style: normal;
   background-color: #CCC1BC;
   min-height: 100vh;
 }
@@ -130,13 +129,7 @@ button{
   width: 100%;
 }
 
-.list{
-  width: 100%;
-  min-height: 50vh;
-  height: 100%;
-  flex-grow: 2;
-}
-
+/* navList */
 nav{
   width: 100%;
   display: flex;
@@ -146,17 +139,36 @@ nav{
 }
 nav li{
   list-style: none;
+  cursor: pointer;
+  font-family: var(--graficFont);
+}
+nav ul{
   display: flex;
   justify-content: space-between;
   width: 60%;
 }
-nav ul{
-  cursor: pointer;
-}
 nav .active{
-  text-decoration: underline #76221E;
-  color: #76221E;
+  text-decoration: underline var(--accentColor);
+  color: var(--accentColor);
 }
+.add{
+  background-color: rgba(0, 0, 0, 0);
+  width: auto;
+  font-weight: bolder;
+  color: var(--textColor);
+  font-size: 42px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+.list{
+  width: 100%;
+  min-height: 50vh;
+  height: 100%;
+  flex-grow: 2;
+}
+
+
 .features{
   display: flex;
   justify-content: space-between;

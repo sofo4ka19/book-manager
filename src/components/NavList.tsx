@@ -37,21 +37,21 @@ function NavList(){
     }
     return (
         <>
-        <section className="listBar">
         <nav>
+        <ul>
             {listNames.map((name) => (
-                <ul 
+                <li 
                     key={name} 
                     className={`listName ${store.currentSelectedList === name ? "active" : ""}`} 
                     onClick={() => store.setCurrentList(name as TypeOfList)}
                 >
                     {name}
-                </ul>
+                </li>
             ))}
-        </nav>
+        </ul>
         {!(store.currentSelectedList === "Recommendations") && <button onClick={() => setToggle(true)} className="add">+</button>}
         
-        </section>
+        </nav>
         <Modal isOpen={toggle} onClose={() => {setToggle(false) 
             setFoundBooks([])}} title={(foundBooks.length==0)? "Add new book to the list": "Found books:"}>
             {foundBooks.length===0 && (
