@@ -34,14 +34,16 @@ function Profile(){
     return(
         <>
         <section className="profile">
-            <button onClick={() => setToggle(true)}><img src="../../public/settings.svg" alt="logout" /></button>
-            <button onClick={store.logout}><img src="../../public/logout.svg" alt="logout" /></button>
-            <img src={user.avatar || defaultAvatarURL} alt={user.username} />
+            <img className="avatar" src={user.avatar || defaultAvatarURL} alt={user.username} />
             <section className="aboutMe">
                 <h1>{user.username}</h1>
                 {user.bio && (
                 <h2>{user.bio}</h2>)}
             </section>
+            <div className="settings">
+                <button className="iconButton" onClick={() => setToggle(true)}><img src="../../public/settings.svg" alt="logout" /></button>
+                <button className="iconButton" onClick={store.logout}><img src="../../public/logout.svg" alt="logout" /></button>
+            </div>
         </section>
         <Modal isOpen={toggle} onClose={() => setToggle(false)} title = "Change info">
             <div className="fields">
