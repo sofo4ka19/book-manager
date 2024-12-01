@@ -223,20 +223,21 @@ span{
   background: rgba(0, 0, 0, 0.4);
 }
 .modal-content{
-  padding: 40px 70px;
+  padding: 50px 70px;
+  padding-top: 25px;
   background: var(--middleColor1);
   display: flex;
   flex-direction: column;
 }
-.modal-content span:not(.swiper-pagination-bullet){
+.close{
   width: 100%;
   text-align: right;
   font-size: 50px;
-  line-height: 0;
+  line-height: 0.7;
 }
 .modal-content h2{
   font-family: var(--graficFont);
-  font-size: 80px;
+  font-size: 70px;
 }
 .modal-body, .modal-body form{
   width: 100%;
@@ -260,4 +261,32 @@ span{
 .modal-body button{
   margin-top: 35px;
   align-self: center;
+}
+.bookCard_big{
+  margin-top: 20px;
+  align-items: flex-start!important;
+}
+.bookCard_big img{
+  max-width: 200px;
+}
+.bookCard_big .info{
+  font-size: larger;
+  margin-left: 50px;
+  flex-direction: column  ;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.setMark{
+  width: 100%;
+  margin-top: 20px;
+}
+.setMark button{
+  margin: 0;
+}
+.changeTheList .hidden{
+  display: none;
+}
+.changeTheList .listName{
+  font-size: 32px;
+  margin: 0 10px;
 }

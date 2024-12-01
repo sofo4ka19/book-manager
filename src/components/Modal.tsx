@@ -8,7 +8,11 @@ type ModalProps = {
   };
 
   const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
-    if (!isOpen) return null;
+    if (!isOpen){
+      document.body.style.overflow="";
+      return null;
+    } 
+    document.body.style.overflow="hidden";
   
     return (
       <div className="modal-overlay">

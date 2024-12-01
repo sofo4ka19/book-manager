@@ -17,6 +17,7 @@ function List(){
     
     
     async function changeTheList(toList:string){
+        setToggle3(false);
         if(!activeBook){
             return; //error
         }
@@ -77,7 +78,10 @@ function List(){
                 </BookCard>
             ))}
         </div> 
-        <Modal isOpen={toggle2} onClose={() => setToggle2(false)} title="Choose the list">
+        <Modal isOpen={toggle2} onClose={() => {setToggle2(false)
+            setToggle3(false)}
+        } title="Choose the list">
+            <div className="changeTheList">
             {listNames.map((list) => (
                 <span 
                     key={list} 
@@ -86,11 +90,13 @@ function List(){
                 >{list}</span>
             ))}
             {toggle3 && (
-                <div>
+                <div className="setMark">
                     <BasicInput type="number" placeholder="enter your mark from 0 to 5" value={mark} onChange={(e: any) => setMark(validateMark(e.target.value))}></BasicInput>
                     <button onClick={handleMark}>ok</button>
                 </div>
                 )}
+            </div>
+            
         </Modal>
         </>
     );

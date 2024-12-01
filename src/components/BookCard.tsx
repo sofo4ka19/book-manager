@@ -14,14 +14,21 @@ const BookCard: React.FC<BookCardProps> = ({ book, children }) => { //add myRate
       <div className="bookCard">
         <img onClick={() => setIsOpen(true)} src={book.imageUrl || "../../public/bookCover_default"} alt={book.title} className="book-cover" />
         <h3>{book.title}</h3>
-        {/* <p>{book.authors ? book.authors.join(', ') : "Unknown author"}</p> */}
         <div className="booCard-actions">{children}</div>
       </div>
-      <Modal isOpen = {isOpen} onClose={() => setIsOpen(false)} title = {book.title}>
+      <Modal isOpen = {isOpen} onClose={() => setIsOpen(false)} title = "Book info">
             {/* perhaps should add more info */}
-            <img src={book.imageUrl} alt={book.title} />
-            <h3>{book.authors ? book.authors.join(', ') : "Unknown author"}</h3>
-            <p>{book.genres ? book.genres.join(', ') : "Unknown genre"}</p>
+            <div className="bookCard_big">
+              <img src={book.imageUrl} alt={book.title} />
+              <div className="info">
+                <h3>{book.title}</h3>
+                <p>{book.authors ? book.authors.join(', ') : "Unknown author"}</p>
+                <p><br/>Genre: {book.genres ? book.genres.join(', ') : "Unknown genre"}</p>
+                {book.isbn && <p>ISBN: {book.isbn}</p>}
+                {book.rate && <p>Rating: {book.rate}</p>}
+                {book.myRate && <p>My rate: {book.myRate}</p>}
+              </div>
+            </div>
         </Modal>
       </>
     );

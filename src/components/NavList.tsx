@@ -74,7 +74,7 @@ function NavList(){
                 </form>
             )}
             {foundBooks.length>0 &&(
-                <Swiper
+                <Swiper 
                 slidesPerView={3}
                 spaceBetween={30}
                 slidesPerGroup={3}
@@ -82,8 +82,7 @@ function NavList(){
                   clickable: true,
                 }}
                 navigation
-                scrollbar={{hide:true}}
-                modules={[Pagination, Navigation, Scrollbar]}
+                modules={[Pagination, Navigation]}
                 className="mySwiper" id="swiperWork"
             >{foundBooks.map((book) => (
                 <SwiperSlide key={uuidv4()}>
