@@ -161,7 +161,12 @@ export const useAppStore = create<AppState>()(
     logout() {
         FirebaseApi.logout();
         set(() => ({
-            user: null
+            user: null,
+            recommendationsList: [],
+            wishlist: [],
+            finishedList: [],
+            currentlyReadingList: [],
+            currentSelectedList: "Recommendations",
         }));
     },
     updateRecommendations: async () => {
