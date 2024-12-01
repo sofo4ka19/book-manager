@@ -35,7 +35,7 @@ function NavList(){
             setFoundBooks(books); //need func to check if it is in other lists
         }
     }
-    async function addBook(book:Book){
+    async function addBook(book:Book){ //needs implementing mark for finished
         await store.addBookToList(book);
         setToggle(false);
         setFoundBooks([]);
@@ -75,7 +75,7 @@ function NavList(){
             )}
             {foundBooks.length>0 &&(
                 <Swiper 
-                slidesPerView={3}
+                slidesPerView={(foundBooks.length<3)?foundBooks.length:3}
                 spaceBetween={30}
                 slidesPerGroup={3}
                 pagination={{
@@ -85,10 +85,10 @@ function NavList(){
                 modules={[Pagination, Navigation]}
                 className="mySwiper" id="swiperWork"
             >{foundBooks.map((book) => (
-                <SwiperSlide key={uuidv4()}>
-                <div>
-                    hey
-                </div>
+                <SwiperSlide>
+                <BookCard book={book}>
+                    <button onClick={() => addBook(book)}>Add</button>
+                </BookCard>
                 </SwiperSlide>
             ))}</Swiper>
             )}

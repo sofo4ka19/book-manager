@@ -18,7 +18,9 @@
   background-color: #CCC1BC;
   min-height: 100vh;
 }
-div:not(.swiper-pagination), section{
+
+
+div:not(.swiper-pagination, .swiper, .someTest, .swiper-wrapper), section{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
@@ -227,6 +229,7 @@ span{
   background: rgba(0, 0, 0, 0.4);
 }
 .modal-content{
+  max-width: 90%;
   padding: 50px 70px;
   padding-top: 25px;
   background: var(--middleColor1);
