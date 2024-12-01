@@ -14,8 +14,8 @@ type ModalProps = {
       <div className="modal-overlay">
         <div className="modal-content">
         <span className="close" onClick={onClose}>&times;</span>
-          <h2>{title}</h2>
-          <div className="modal-body">{children}</div>
+        <h2>{title}</h2>
+        <div className="modal-body">{children}</div>
         </div>
       </div>
     );

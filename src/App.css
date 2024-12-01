@@ -18,7 +18,7 @@
   background-color: #CCC1BC;
   min-height: 100vh;
 }
-div, section{
+div:not(.swiper-pagination), section{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
@@ -100,12 +100,12 @@ button{
 /* profile */
 .profile{
   width: 100%;
-  padding: 30px 0;
+  padding: 20px 0;
   background-color: var(--middleColor2);
   align-items: flex-start;
 }
 .profile h1{
-  font-size: 85px;
+  font-size: 80px;
 }
 .avatar{
   border-radius: 500px;
@@ -119,7 +119,7 @@ button{
   padding-top: 5px;
 }
 .aboutMe h2{
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 400;
 }
 .settings{
@@ -179,7 +179,7 @@ nav .active{
 }
 .bookCard{
   flex-direction: column;
-  margin-bottom: 30px;
+  margin: 15px 0;
 }
 .bookCard img{
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
@@ -212,83 +212,52 @@ span{
 }
 
 
-.icon{
-  /* height: 45px; */
-  width: 45px;
-  color: #452F24;
-  background: none ;
-  border: none;
-  font-family: "Cormorant Unicase", serif;
-  font-size: 48px;
-  display: flex;
-  align-items: center;
-  margin-left: 7px;
-}
-
-.modal{
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.4);
+/* modal window */
+.modal-overlay{
   position: fixed;
   top: 0;
   left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.card{
-  width: 50%;
-  height: 70%;
-  /* background-color: #C2B3A3; */
-  display: flex;
-  flex-wrap: wrap;
-  /* align-items: start; */
-  /* flex-direction: column;
-  justify-content: space-between; */
-}
-.addCard{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.fields{
   width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.4);
+}
+.modal-content{
+  padding: 40px 70px;
+  background: var(--middleColor1);
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
 }
-h2{
-  width: 100%;
-  font-size: 50px;
-}
-.close{
+.modal-content span:not(.swiper-pagination-bullet){
   width: 100%;
   text-align: right;
   font-size: 50px;
-  height: fit-content;
   line-height: 0;
 }
-
-.swiper-wrapper{
-  width: 80%;
-  height: auto;
+.modal-content h2{
+  font-family: var(--graficFont);
+  font-size: 80px;
 }
-.card_small{
+.modal-body, .modal-body form{
   width: 100%;
+}
+.modal-body form{
   display: flex;
+  flex-wrap: wrap;
+}
+.addCard{
   flex-direction: column;
-  align-items: center;
 }
-.card_small img{
-  width: 75%;
-  max-height: 200px;
+.fields{
+  flex-direction: column;
 }
-.card_small h2{
-  font-size: 32px;
-  line-height: 1;
+.fields label{
+  width: 100%;
 }
-.card_small button{
-  width: 80%;
-  height: auto;
-  font-size: 25px;
+.fields input{
+  width: calc(100% - 30px);
+}
+.modal-body button{
+  margin-top: 35px;
+  align-self: center;
 }

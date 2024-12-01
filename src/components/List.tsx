@@ -1,11 +1,6 @@
 import { useState } from "react";
 import BookCard from "./BookCard";
 import {Book} from "../models/Book";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import { Pagination, Scrollbar, Navigation } from 'swiper/modules';
 import { useAppStore } from "../store/Store";
 import Modal from "./Modal";
 import { TypeOfList } from "../store/Store";
@@ -81,29 +76,7 @@ function List(){
                     )}
                 </BookCard>
             ))}
-        </div>
-                {/* // needs to be set
-            //     <Swiper
-            //     slidesPerView={3}
-            //     spaceBetween={30}
-            //     slidesPerGroup={3}
-            //     pagination={{
-            //         clickable: true,
-            //     }}
-            //     scrollbar={{
-            //         hide: true,
-            //       }}
-            //       navigation={true}
-            //     modules={[Pagination, Scrollbar, Navigation]}
-            //     className="mySwiper"
-            // >
-            //     {foundBooks.map((book) => (
-            //         <SwiperSlide>
-            //             <BookCard book={book}></BookCard>
-            //             <button onClick={() => addBook(book)}>Add</button>
-            //         </SwiperSlide>
-            //      ))}
-            // </Swiper> */}
+        </div> 
         <Modal isOpen={toggle2} onClose={() => setToggle2(false)} title="Choose the list">
             {listNames.map((list) => (
                 <span 

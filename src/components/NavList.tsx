@@ -4,6 +4,12 @@ import { Book } from "../models/Book";
 import Modal from "./Modal";
 import BookApi from "../api/BookApi";
 import BookCard from "./BookCard";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import { Navigation, Pagination, Scrollbar } from "swiper/modules";
+import { v4 as uuidv4 } from 'uuid';
 
 function NavList(){
     const listNames = ["Recommendations", "Wishlist", "Reading", "Finished"];
@@ -62,20 +68,33 @@ function NavList(){
                                 <input onChange={(e) => author = e.target.value} type="text" />
                                 <label>Title</label>
                                 <input onChange={(e) => title = e.target.value} type="text" />
-                            </div>
-                            {/* perhaps should be transformed to prop */}
-                            <button type="submit" className="find">Find</button> 
+                    </div>
+                    {/* perhaps should be transformed to prop */}
+                    <button type="submit">Search</button> 
                 </form>
             )}
             {foundBooks.length>0 &&(
-                foundBooks.map((book) => (
-                    <div>
-                        <BookCard book={book}>
-                            <button style={{marginRight: '30px'}} onClick={() => addBook(book)}>Add</button>
-                        </BookCard>
-                    </div>
-                )))}
-                </Modal>
+                <Swiper
+                slidesPerView={3}
+                spaceBetween={30}
+                slidesPerGroup={3}
+                pagination={{
+                  clickable: true,
+                }}
+                navigation
+                scrollbar={{hide:true}}
+                modules={[Pagination, Navigation, Scrollbar]}
+                className="mySwiper" id="swiperWork"
+            >{foundBooks.map((book) => (
+                <SwiperSlide key={uuidv4()}>
+                <div>
+                    hey
+                </div>
+                </SwiperSlide>
+            ))}</Swiper>
+            )}
+                
+            </Modal>
         </>
     );
 }
