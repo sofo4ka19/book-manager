@@ -77,6 +77,9 @@ function List(){
                     )}
                 </BookCard>
             ))}
+            {store.getBooksOfCurrentList().length==0 && (
+                <p className="emptyList">{(store.currentSelectedList === "Recommendations")?"Add book to finished list to get recommendations":"This list is empty, click on \"+\" to add the book"}</p>
+            )}
         </div> 
         <Modal isOpen={toggle2} onClose={() => {setToggle2(false)
             setToggle3(false)}

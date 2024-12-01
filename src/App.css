@@ -78,6 +78,7 @@ button{
   width: 45%;
 }
 .enter h2{
+  font-size: 48px;
   font-weight: 400;
   margin-bottom: 28px;
 }
@@ -204,6 +205,9 @@ nav .active{
 }
 .bookCard span{
   color: var(--accentColor);
+}
+.emptyList, .loading{
+  font-size: 24px;
 }
 span{
   margin-top: 5px;

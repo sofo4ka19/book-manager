@@ -32,7 +32,7 @@ export const useAppStore = create<AppState>()(
     wishlist: [],
     finishedList: [],
     currentlyReadingList: [],
-    currentSelectedList: null,
+    currentSelectedList: "Recommendations",
 
     setUser: (user: UserTemp|null) => set({ user }),
     // perhaps needs refactoring
