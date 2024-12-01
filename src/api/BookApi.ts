@@ -15,13 +15,13 @@ export default class BookApi extends ApiClient {
 
     if (authors && authors.length > 0) {
         const authorQueries = authors.map(author => `inauthor:${author}`).join('|');
-        params.push(`(${authorQueries})`);
+        params.push(`${authorQueries}`);
     }
     
 
     if (genres && genres.length > 0) {
-        const authorQueries = genres.map(genre => `subject:${genre}`).join('|');
-        params.push(`(${authorQueries})`);
+        const genreQueries = genres.map(genre => `subject:${genre}`).join('|');
+        params.push(`(${genreQueries})`);
     }
     const configBase = {
         params: {
@@ -45,7 +45,7 @@ export default class BookApi extends ApiClient {
 
             try {
                 const response = await this.get<any>(endpoint, config);
-                console.log(response)
+                console.log(title, authors, genres, language, ":", response)
                 if (response?.items) {
                     results.push(
                         ...response.items.map((item: any) => serialised.deserialize(item))
@@ -58,6 +58,7 @@ export default class BookApi extends ApiClient {
             // Запит без мовного обмеження
             try {
                 const response = await this.get<any>(endpoint, configBase);
+                console.log(title, authors, genres, languages, ":", response)
                 if (response?.items) {
                     results.push(
                         ...response.items.map((item: any) => serialised.deserialize(item))
@@ -74,14 +75,31 @@ export default class BookApi extends ApiClient {
   public static async searchBookOR(authors:string[]|null, genres:string[]|null, languages?:string[]){
     if(!authors && !genres) return [];
     try{
-        const exactMatch = await BookApi.searchBooks(null, authors, genres, languages);
+        // const exactMatch = await BookApi.searchBooks(null, authors, null, languages);
+        
         const queries = [];
-        if (authors && authors.length > 0 && !authors.includes("Unknown author")) {
-            queries.push(BookApi.searchBooks(null, authors, null, languages)); // Запит для авторів
+        if (genres && genres.length > 0) {
+            const filteredGenres = genres.filter(genre => genre !== "Unknown genre");
+            if (filteredGenres.length > 0) {
+                
+            if (authors && authors.length > 0) {
+                for(let author of authors){
+                    if(author!="Unknown author"){
+                    queries.push(BookApi.searchBooks(null, [author],filteredGenres, languages));
+                    }
+                }}
+            }
+            queries.push(BookApi.searchBooks(null, null, filteredGenres, languages)); // Запит для жанрів
         }
-        if (genres && genres.length > 0 && !genres.includes("Unknown genre")) {
-            queries.push(BookApi.searchBooks(null, null, genres, languages)); // Запит для жанрів
+        
+        if (authors && authors.length > 0) {
+            for(let author of authors){
+                if(author!="Unknown author"){
+                    queries.push(BookApi.searchBooks(null, [author], null, languages)); // Запит для авторів
+                }
+            }
         }
+        if (queries.length === 0) return [];
         const results = await Promise.all(queries);
         const uniqueBooks = new Map<string, Book>();
 
@@ -90,7 +108,7 @@ export default class BookApi extends ApiClient {
         };
 
         // Додаємо книги з точного збігу та додаткових запитів
-        addBooksToMap(exactMatch);
+        //addBooksToMap(exactMatch);
         addBooksToMap(results.flat());
         console.log(Array.from(uniqueBooks.values()))
         // Повертаємо унікальні книги
