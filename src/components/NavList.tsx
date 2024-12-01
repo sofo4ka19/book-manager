@@ -9,12 +9,14 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Navigation, Pagination, Scrollbar } from "swiper/modules";
-import { v4 as uuidv4 } from 'uuid';
+import BasicInput from "./BasicInput";
 
 function NavList(){
     const listNames = ["Recommendations", "Wishlist", "Reading", "Finished"];
     const [toggle, setToggle] = useState<boolean>(false);
     const [foundBooks, setFoundBooks] = useState<Book[]>([]); 
+    const [mark, setMark] = useState<string>("");
+    const [selectedBook, setSelectedBook] = useState<Book | null>(null);
     let author ="";
     let title = "";
     const store = useAppStore()
@@ -36,9 +38,20 @@ function NavList(){
         }
     }
     async function addBook(book:Book){ //needs implementing mark for finished
+        if(store.currentSelectedList==="Finished"){
+            const numericMark = parseFloat(mark);
+
+            if (isNaN(numericMark) || numericMark < 0 || numericMark > 5) {
+                alert("Please provide a rating between 0 and 5.");
+                return;
+            }
+            book.myRate = numericMark;
+        }
         await store.addBookToList(book);
         setToggle(false);
         setFoundBooks([]);
+        setMark("");
+        setSelectedBook(null)
         console.log(store.user)
     }
     return (
@@ -73,7 +86,7 @@ function NavList(){
                     <button type="submit">Search</button> 
                 </form>
             )}
-            {foundBooks.length>0 &&(
+            {foundBooks.length>0 && !selectedBook &&(
                 <Swiper 
                 slidesPerView={(foundBooks.length<3)?foundBooks.length:3}
                 spaceBetween={30}
@@ -87,13 +100,21 @@ function NavList(){
             >{foundBooks.map((book) => (
                 <SwiperSlide>
                 <BookCard book={book}>
-                    <button onClick={() => addBook(book)}>Add</button>
+                    <button onClick={() => (store.currentSelectedList==="Finished")?setSelectedBook(book): addBook(book)}>Add</button>
                 </BookCard>
                 </SwiperSlide>
             ))}</Swiper>
             )}
+            {selectedBook && store.currentSelectedList === "Finished" && (
+                    <div className="setMark_column">
+                        <label>Enter your mark to this book</label>
+                        <BasicInput value={mark} type="number" placeholder="enter your mark from 0 to 5" onChange={(e: any) => setMark((e.target.value))}/>
+                        <button onClick={() => addBook(selectedBook)}>Add to Finished</button>
+                    </div>
+                )}
                 
             </Modal>
+            
         </>
     );
 }

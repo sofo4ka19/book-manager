@@ -299,3 +299,6 @@ span{
   font-size: 32px;
   margin: 0 10px;
 }
+.setMark_column{
+  flex-direction: column;
+}
