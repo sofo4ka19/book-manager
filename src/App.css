@@ -38,6 +38,7 @@ input{
   border: none;
 }
 label{
+  font-family: var(--readFont);
   text-align: left;
   font-size: 30px;
 }
@@ -216,6 +217,11 @@ span{
   font-size: 16px;
   cursor: pointer;
 }
+.bookTitle{
+  display: block;
+  overflow: hidden;               
+  text-overflow: ellipsis; 
+}
 
 
 /* modal window */
@@ -284,6 +290,7 @@ span{
   align-items: flex-start;
   justify-content: flex-start;
   text-align: left;
+  font-family: var(--readFont);
 }
 .setMark{
   width: 100%;
@@ -301,4 +308,8 @@ span{
 }
 .setMark_column{
   flex-direction: column;
+}
+.swiper .bookCard{
+  width: 75%;
+  padding-bottom: 20px;
 }

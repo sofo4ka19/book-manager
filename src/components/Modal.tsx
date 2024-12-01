@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 
 type ModalProps = {
     isOpen: boolean;
@@ -14,14 +15,15 @@ type ModalProps = {
     } 
     document.body.style.overflow="hidden";
   
-    return (
+    return createPortal(
       <div className="modal-overlay">
         <div className="modal-content">
         <span className="close" onClick={onClose}>&times;</span>
         <h2>{title}</h2>
         <div className="modal-body">{children}</div>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   };
   

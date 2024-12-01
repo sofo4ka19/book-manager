@@ -13,7 +13,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, children }) => { //add myRate
     <>
       <div className="bookCard">
         <img onClick={() => setIsOpen(true)} src={book.imageUrl || "../../public/bookCover_default"} alt={book.title} className="book-cover" />
-        <h3>{book.title}</h3>
+        <h3 className="bookTitle">{book.title}</h3>
         <div className="booCard-actions">{children}</div>
       </div>
       <Modal isOpen = {isOpen} onClose={() => setIsOpen(false)} title = "Book info">
