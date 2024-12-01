@@ -7,6 +7,7 @@ import { useAppStore } from "./store/Store";
 import LoginCard from "./components/auth/LoginCard.tsx";
 import RegisterCard from "./components/auth/RegisterCard.tsx";
 import FirebaseApi from "./api/FirebaseApi.ts";
+import { RecomendationList } from "./models/RecommendationList.ts";
 
 const App = () => {
   const setUser = useAppStore((state : any) => state.setUser);
@@ -30,7 +31,8 @@ const App = () => {
                   store.wishlist = await FirebaseApi.loadBooksByIds(userData.wishlist || []);
                   store.currentlyReadingList = await FirebaseApi.loadBooksByIds(userData.readingList || []);
                   store.finishedList = await FirebaseApi.loadBooksWithRating(userData.haveRead || []);
-                  userData.id = userId;
+                  userData.id = userId; 
+                  store.updateRecommendations();
                   if(!userData.avatar) userData.avatar = defaultAvatarURL;
                   setUser(userData);
                   console.log("User Data:", store.user  );

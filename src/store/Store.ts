@@ -3,6 +3,7 @@ import {UserTemp} from "../models/User";
 import {Book} from "../models/Book";
 import {devtools} from "zustand/middleware";
 import FirebaseApi from "../api/FirebaseApi.ts";
+import { RecomendationList } from "../models/RecommendationList.ts";
 
 export type TypeOfList = "Recommendations" | "Wishlist" | "Reading" | "Finished" | null;
 
@@ -19,6 +20,7 @@ interface AppState {
   addBookToList: (book: Book, myRate?:number) => void;
   removeBookFromList: (bookId: string, rate?:number) => void;
   loadBookForUser: () => Promise<void>;
+  updateRecommendations: () => Promise<void>;
   getBooksOfCurrentList: () => Book[];
   updateUser: (username: string, bio: string, avatar: string) => void;
   logout:() => void;
@@ -109,6 +111,7 @@ export const useAppStore = create<AppState>()(
                 set((state) => ({
                     finishedList: [...state.finishedList, book],
                 }))
+                await get().updateRecommendations()
                 break;
 
             case "Reading":
@@ -123,7 +126,10 @@ export const useAppStore = create<AppState>()(
       const user = get().user;
       const currentSelectedList = get().currentSelectedList
       console.log(bookId, rate);
-      if (user && currentSelectedList) await FirebaseApi.removeBookFromUserList(user.id, currentSelectedList, bookId, rate)
+      if(get().currentSelectedList!=="Recommendations"){
+        if (user && currentSelectedList) await FirebaseApi.removeBookFromUserList(user.id, currentSelectedList, bookId, rate)
+      }
+      
       // TODO: check if call is successful
 
       switch (get().currentSelectedList) {
@@ -137,11 +143,17 @@ export const useAppStore = create<AppState>()(
               set((state) => ({
                   finishedList: state.finishedList.filter(book => book.id !== bookId),
               }))
+              await get().updateRecommendations()
               break;
 
           case "Reading":
               set((state) => ({
                   currentlyReadingList: state.currentlyReadingList.filter(book => book.id !== bookId),
+              }))
+              break;
+            case "Recommendations":
+              set((state) => ({
+                recommendationsList: state.recommendationsList.filter(book => book.id !== bookId),
               }))
               break;
       }
@@ -150,6 +162,13 @@ export const useAppStore = create<AppState>()(
         FirebaseApi.logout();
         set(() => ({
             user: null
+        }));
+    },
+    updateRecommendations: async () => {
+        const recomendationList = new RecomendationList();
+        await recomendationList.addBook();
+        set(() => ({
+            recommendationsList: recomendationList.list
         }));
     },
     loadBookForUser: async () => {

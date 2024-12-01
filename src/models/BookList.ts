@@ -36,7 +36,7 @@ export default class BookList{
        if(this.isHere(book.id)==-1){
             this.books.push(book);
        }
-       throw new Error ("This book is already here");
+    //    throw new Error ("This book is already here");
     }
     public removeBook(book : Book) : void{
         if(this.isHere(book.id)!=-1){

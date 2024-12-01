@@ -21,10 +21,10 @@ function List(){
         if(!activeBook){
             return; //error
         }
-        if(!(store.currentSelectedList === "Recommendations")){
+        // if(!(store.currentSelectedList === "Recommendations")){
             await store.removeBookFromList(activeBook.id, activeBook.myRate);
-            console.log(activeBook.myRate)
-        }
+            // console.log(activeBook.myRate)
+        // }
         if(store.currentSelectedList=="Finished" && toList!="Finished"){
             delete activeBook.myRate;
         }

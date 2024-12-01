@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 export default class BookSerializer extends Serializer<Book>{
     deserialize(data: any): Book {
         return {
-            id: uuidv4(), //perhaps needs changing
+            id: data.id, //perhaps needs changing
             title: data.volumeInfo.title,
             authors: data.volumeInfo.authors || null,
             genres: data.volumeInfo.categories || null,

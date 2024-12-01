@@ -5,6 +5,7 @@ import {sendPasswordResetEmail, signInWithEmailAndPassword} from "firebase/auth"
 import {auth} from "../../firebase.ts";
 import FirebaseApi from "../../api/FirebaseApi.ts";
 import { useNavigate } from "react-router-dom";
+import { RecomendationList } from "../../models/RecommendationList.ts";
 
 
 const LoginCard: React.FC = () => {
@@ -38,7 +39,11 @@ const LoginCard: React.FC = () => {
                 store.wishlist = await FirebaseApi.loadBooksByIds(userData.wishlist || []);
                 store.currentlyReadingList = await FirebaseApi.loadBooksByIds(userData.readingList || []);
                 store.finishedList = await FirebaseApi.loadBooksWithRating(userData.haveRead || []);
-                userData.id = userId;
+                userData.id = userId; 
+                // const recomendationList = new RecomendationList();
+                // console.log("Recommends" + recomendationList);
+                // await recomendationList.addBook();
+                // store.recommendationsList = recomendationList.list;
                 if(!userData.avatar) userData.avatar = defaultAvatarURL;
                 setUser(userData);
             }
