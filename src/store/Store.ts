@@ -19,7 +19,7 @@ interface AppState {
   setUser: (user: UserTemp|null) => void;
   addBookToList: (book: Book, myRate?:number) => void;
   removeBookFromList: (bookId: string, rate?:number) => void;
-  loadBookForUser: () => Promise<void>;
+  loadUserData: (id: string) => Promise<void>;
   updateRecommendations: () => Promise<void>;
   getBooksOfCurrentList: () => Book[];
   updateUser: (username: string, bio: string, avatar: string) => void;
@@ -176,8 +176,32 @@ export const useAppStore = create<AppState>()(
             recommendationsList: recomendationList.list
         }));
     },
-    loadBookForUser: async () => {
-
+    loadUserData: async (userId: string) => {
+        const defaultAvatarURL = "/avatar_default.png";
+        try{
+            const userData = await FirebaseApi.getUserData(userId);
+            if (!userData) {
+                throw new Error("User data don't found");
+            } else {
+                const wishlist = await FirebaseApi.loadBooksByIds(userData.wishlist || []);
+                const currentlyReadingList = await FirebaseApi.loadBooksByIds(userData.readingList || []);
+                const finishedList = await FirebaseApi.loadBooksWithRating(userData.haveRead || []);
+                userData.id = userId; 
+                if(!userData.avatar) userData.avatar = defaultAvatarURL;
+                set({
+                    user: { ...userData, id: userId },
+                    wishlist,
+                    currentlyReadingList,
+                    finishedList,
+                });
+                await get().updateRecommendations()
+            }
+        } catch(error){
+            
+            console.error("Error loading user data:", error);
+            alert("Oops, something is wrong, try again")
+            throw error;
+        }
     }
 
 }),

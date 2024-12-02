@@ -6,12 +6,9 @@ import "./App.css";
 import { useAppStore } from "./store/Store";
 import LoginCard from "./components/auth/LoginCard.tsx";
 import RegisterCard from "./components/auth/RegisterCard.tsx";
-import FirebaseApi from "./api/FirebaseApi.ts";
-import { RecomendationList } from "./models/RecommendationList.ts";
 
 const App = () => {
   const setUser = useAppStore((state : any) => state.setUser);
-  const defaultAvatarURL = "/avatar_default.png";
   const store = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,27 +18,15 @@ const App = () => {
       console.log("User from fb api: " + currentUser);
       
       if(currentUser){
-        const userId = currentUser.uid;
         try{
-          const userData = await FirebaseApi.getUserData(userId);
-          console.log("User Data:", userData  );
-              if (!userData) {
-                  throw new Error("User data don't found");
-              } else {
-                  store.wishlist = await FirebaseApi.loadBooksByIds(userData.wishlist || []);
-                  store.currentlyReadingList = await FirebaseApi.loadBooksByIds(userData.readingList || []);
-                  store.finishedList = await FirebaseApi.loadBooksWithRating(userData.haveRead || []);
-                  userData.id = userId; 
-                  store.updateRecommendations();
-                  if(!userData.avatar) userData.avatar = defaultAvatarURL;
-                  setUser(userData);
-                  console.log("User Data:", store.user  );
-              }
+          await store.loadUserData(currentUser.uid)
         } catch (error) {
           // TODO :catch properly
           console.error("Error:", error);
+          setUser(null);
+        }
       }
-      }
+      console.log("User from store: " + store.user);
       setIsLoading(false);
     });
     return unsubscribe;

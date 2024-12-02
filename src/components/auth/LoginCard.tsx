@@ -1,11 +1,9 @@
 import BasicInput from "../../components/BasicInput.tsx";
 import {useState} from "react";
-import {useAppStore} from "../../store/Store.ts";
 import {sendPasswordResetEmail, signInWithEmailAndPassword} from "firebase/auth";
 import {auth} from "../../firebase.ts";
-import FirebaseApi from "../../api/FirebaseApi.ts";
+import { FirebaseError } from "firebase/app";
 import { useNavigate } from "react-router-dom";
-import { RecomendationList } from "../../models/RecommendationList.ts";
 
 
 const LoginCard: React.FC = () => {
@@ -15,46 +13,30 @@ const LoginCard: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const setUser = useAppStore((state) => state.setUser);
-    const store = useAppStore()
-
-
-    const defaultAvatarURL = "/avatar_default.png";
-
 
     const handleAuth = async () => {
         try {
-            let userCredential;
-            let userId;
-
             // Вхід
-            userCredential = await signInWithEmailAndPassword(auth, email, password);
-            userId = userCredential.user.uid;
-            // Завантаження даних користувача
-            const userData = await FirebaseApi.getUserData(userId);
-            console.log("User Data:", userData);
-            if (!userData) {
-                throw new Error("User data don't found");
-            } else {
-                store.wishlist = await FirebaseApi.loadBooksByIds(userData.wishlist || []);
-                store.currentlyReadingList = await FirebaseApi.loadBooksByIds(userData.readingList || []);
-                store.finishedList = await FirebaseApi.loadBooksWithRating(userData.haveRead || []);
-                userData.id = userId; 
-                // const recomendationList = new RecomendationList();
-                // console.log("Recommends" + recomendationList);
-                // await recomendationList.addBook();
-                // store.recommendationsList = recomendationList.list;
-                if(!userData.avatar) userData.avatar = defaultAvatarURL;
-                setUser(userData);
-            }
-
+            await signInWithEmailAndPassword(auth, email, password);
             navigate('/home')
 
-
-
         } catch (error) {
-            // TODO :catch properly
-            console.error("Error:", error);
+            console.log(error)
+            if(error instanceof FirebaseError){
+                switch(error.code){
+                    case "auth/user-not-found":
+                        alert("No user found with this email.")
+                        break;
+                    case "auth/wrong-password":
+                        alert("Incorrect password")
+                        break;
+                    default:
+                        alert("An error occurred during authentication.");
+                }
+            }
+            else{
+                alert("An error occurred during authentication.");
+            }
         }
     }
 
@@ -68,7 +50,7 @@ const LoginCard: React.FC = () => {
             await sendPasswordResetEmail(auth, email);
             alert("Instructions for reseting the password was send to your email");
         } catch (error) {
-            console.error("Error during reseting the password:", error);
+            alert("Error during reseting the password: "+ error);
         }
     };
 
