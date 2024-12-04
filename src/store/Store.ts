@@ -38,10 +38,12 @@ export const useAppStore = create<AppState>()(
 
     setUser: (user: UserTemp|null) => set({ user }),
     // perhaps needs refactoring
-    updateUser: (username: string, bio: string, avatar: string) => {
+    updateUser: async (username: string, bio: string, avatar: string) => {
 
       const userFromStore = {...get().user};
-
+    //   perhaps needs changings with avatar
+    try{
+      await FirebaseApi.updateUserInfo(userFromStore.id!, username, bio, (!avatar || avatar=="/avatar_default.png")?(""):avatar);
       const user: UserTemp = {
           ...userFromStore,
           username: (username && username!="")?(username):userFromStore.username!,
@@ -49,12 +51,14 @@ export const useAppStore = create<AppState>()(
           avatar: (avatar && avatar!="")?(avatar):userFromStore.avatar!,
           id: userFromStore.id!,
           email: userFromStore.email!,
-
       }
 
       set(() => ({
           user: user
       }));
+    }catch(error){
+        throw error
+      }
     },
     setCurrentList: (list: TypeOfList) => {
       set(() => ({

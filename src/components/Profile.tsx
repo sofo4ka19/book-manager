@@ -1,5 +1,4 @@
 import {useState} from "react";
-import FirebaseApi from "../api/FirebaseApi";
 import Modal from "./Modal";
 import { useAppStore } from "../store/Store";
 import { useNavigate } from "react-router-dom";
@@ -21,14 +20,17 @@ function Profile(){
 
     const defaultAvatarURL = "/avatar_default.png";
 
-    function changeInfo(){
+    async function changeInfo(){
         console.log(name, bio, avatarURL);
         if(!user){
             navigate("/login")
             return;
         }
-        FirebaseApi.updateUserInfo(user.id, name, bio, (!avatarURL || avatarURL==defaultAvatarURL)?(""):avatarURL);
-        store.updateUser(name,bio,avatarURL || defaultAvatarURL);
+        try{
+        await store.updateUser(name,bio,avatarURL || defaultAvatarURL);
+        }catch(error){
+            alert("Error. Data wasn't updated")
+        }
         setToggle(false);
     }
     return(
