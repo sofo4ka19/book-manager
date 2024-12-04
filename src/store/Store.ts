@@ -190,14 +190,19 @@ export const useAppStore = create<AppState>()(
                 if(!userData.avatar) userData.avatar = defaultAvatarURL;
                 set({
                     user: { ...userData, id: userId },
-                    wishlist,
-                    currentlyReadingList,
-                    finishedList,
+                    wishlist: wishlist,
+                    currentlyReadingList: currentlyReadingList,
+                    finishedList: finishedList,
                 });
                 await get().updateRecommendations()
             }
         } catch(error){
-            
+            set({
+                user: null,
+                wishlist: [],
+                currentlyReadingList: [],
+                finishedList: [],
+            });
             console.error("Error loading user data:", error);
             alert("Oops, something is wrong, try again")
             throw error;

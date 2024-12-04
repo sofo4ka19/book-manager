@@ -23,7 +23,7 @@ const App = () => {
         } catch (error) {
           // TODO :catch properly
           console.error("Error:", error);
-          setUser(null);
+          // setUser(null);
         }
       }
       console.log("User from store: " + store.user);

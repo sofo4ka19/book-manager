@@ -12,9 +12,24 @@ const LoginCard: React.FC = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
-
+    const [errorFields, setErrorFields] = useState({email: "", password: ""});
+ 
+    const validateEmpty = () => {
+        let valid = true;
+        let errors: any = {};
+        if(email==""){
+            errors.email = "it is required field";
+            valid = false;
+        }
+        if(password==""){
+            errors.password = "it is required field";
+            valid = false;
+        }
+        setErrorFields(errors);
+        return valid;
+    }
     const handleAuth = async () => {
+        if(!validateEmpty()) return;
         try {
             // Вхід
             await signInWithEmailAndPassword(auth, email, password);
@@ -68,7 +83,9 @@ const LoginCard: React.FC = () => {
                     value={email}
                     onChange={(e: any) => setEmail(e.target.value)}
                     required = {true}
+                    style={{ border: errorFields.email ? '2px solid red' : '' }}
                 />
+                {errorFields.email && <small style={{ color: 'red', marginTop: '-15px'  }}>{errorFields.email}</small>}
                 <label>Password</label>
                 <BasicInput
                     type="password"
@@ -76,7 +93,9 @@ const LoginCard: React.FC = () => {
                     value={password}
                     onChange={(e: any) => setPassword(e.target.value)}
                     required= {true}
+                    style={{ border: errorFields.password ? '2px solid red' : '' }}
                 />
+                {errorFields.password && <small style={{ color: 'red', marginTop: '-15px' }}>{errorFields.password}</small>}
 
 
                 <button className="auth" onClick={handleAuth}>Login</button>
