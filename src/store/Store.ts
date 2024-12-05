@@ -92,74 +92,78 @@ export const useAppStore = create<AppState>()(
       const user = get().user;
       const currentSelectedList = get().currentSelectedList;
       try{
-      if (user && currentSelectedList) await FirebaseApi.addBookToUserList(user.id, currentSelectedList, book)
-      // TODO: check if call is successful
+        if (user && currentSelectedList) await FirebaseApi.addBookToUserList(user.id, currentSelectedList, book)
+            switch (currentSelectedList) {
+                //i think we don't need it
+                // case "Recommendations":
+                //     set((state) => ({
+                //         recommendationsList: [...state.recommendationsList, book],
+                //     }))
+                //     break;
+    
+                case "Wishlist":
+                    set((state) => ({
+                        wishlist: [...state.wishlist, book],
+                    }))
+                    break;
+    
+                case "Finished":
+                    set((state) => ({
+                        finishedList: [...state.finishedList, book],
+                    }))
+                    await get().updateRecommendations()
+                    break;
+    
+                case "Reading":
+                    set((state) => ({
+                        currentlyReadingList: [...state.currentlyReadingList, book],
+                    }))
+                    break;
+            }
     } catch(error){
-        console.error("Firebase:", error);
+        console.error(error);
+        throw new Error("problem with adding")
     }
 
-      switch (currentSelectedList) {
-            case "Recommendations":
-                set((state) => ({
-                    recommendationsList: [...state.recommendationsList, book],
-                }))
-                break;
-
-            case "Wishlist":
-                set((state) => ({
-                    wishlist: [...state.wishlist, book],
-                }))
-                break;
-
-            case "Finished":
-                set((state) => ({
-                    finishedList: [...state.finishedList, book],
-                }))
-                await get().updateRecommendations()
-                break;
-
-            case "Reading":
-                set((state) => ({
-                    currentlyReadingList: [...state.currentlyReadingList, book],
-                }))
-                break;
-        }
+      
     },
 
     removeBookFromList: async (bookId, rate?) => {
       const user = get().user;
       const currentSelectedList = get().currentSelectedList
       console.log(bookId, rate);
-      if(get().currentSelectedList!=="Recommendations"){
-        if (user && currentSelectedList) await FirebaseApi.removeBookFromUserList(user.id, currentSelectedList, bookId, rate)
-      }
-      
-      // TODO: check if call is successful
-
-      switch (get().currentSelectedList) {
-          case "Wishlist":
-              set((state) => ({
-                  wishlist: state.wishlist.filter(book => book.id !== bookId),
-              }))
-              break;
-
-          case "Finished":
-              set((state) => ({
-                  finishedList: state.finishedList.filter(book => book.id !== bookId),
-              }))
-              await get().updateRecommendations()
-              break;
-
-          case "Reading":
-              set((state) => ({
-                  currentlyReadingList: state.currentlyReadingList.filter(book => book.id !== bookId),
-              }))
-              break;
-            case "Recommendations":
-              set((state) => ({
-                recommendationsList: state.recommendationsList.filter(book => book.id !== bookId),
-              }))
-              break;
+      try{
+        if(currentSelectedList!=="Recommendations"){
+            if (user && currentSelectedList) await FirebaseApi.removeBookFromUserList(user.id, currentSelectedList, bookId, rate)
+        }
+        switch (currentSelectedList) {
+            case "Wishlist":
+                set((state) => ({
+                    wishlist: state.wishlist.filter(book => book.id !== bookId),
+                }))
+                break;
+  
+            case "Finished":
+                set((state) => ({
+                    finishedList: state.finishedList.filter(book => book.id !== bookId),
+                }))
+                await get().updateRecommendations()
+                break;
+  
+            case "Reading":
+                set((state) => ({
+                    currentlyReadingList: state.currentlyReadingList.filter(book => book.id !== bookId),
+                }))
+                break;
+              case "Recommendations":
+                set((state) => ({
+                  recommendationsList: state.recommendationsList.filter(book => book.id !== bookId),
+                }))
+                break;
+        }
+      }catch(error){
+        console.error(error);
+        throw new Error("problem with removing")
       }
     }, 
     logout() {

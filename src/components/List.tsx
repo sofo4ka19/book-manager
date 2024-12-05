@@ -19,22 +19,38 @@ function List(){
     async function changeTheList(toList:string){
         setToggle3(false);
         if(!activeBook){
-            return; //error
+            alert("Book wasn't chosen. Try again") //do we need it?
+            return;
         }
-        // if(!(store.currentSelectedList === "Recommendations")){
+        try{
             await store.removeBookFromList(activeBook.id, activeBook.myRate);
-            // console.log(activeBook.myRate)
-        // }
-        if(store.currentSelectedList=="Finished" && toList!="Finished"){
-            delete activeBook.myRate;
+            if(store.currentSelectedList=="Finished" && toList!="Finished"){
+                delete activeBook.myRate;
+            }
+            setToggle2(false);
+            store.setCurrentList(toList as TypeOfList)
+            await store.addBookToList(activeBook);
+        }catch(error){
+            if(error instanceof Error){
+                switch(error.message){
+                    case "problem with removing":
+                        alert("Sorry, something is wrong")
+                        setToggle2(false)
+                    break;
+                    case "problem with adding":
+                        //perhaps should be changed
+                        alert("Sorry, something is wrong, book was deleted from the list, try to add it manually")
+                }
+            }
         }
-        store.setCurrentList(toList as TypeOfList)
-        await store.addBookToList(activeBook);
         setActiveBook(null);
-        setToggle2(false);
     }
     async function removeFromList(book:Book){
-        await store.removeBookFromList(book.id, book.myRate);
+        try{
+            await store.removeBookFromList(book.id, book.myRate);
+        }catch(error){
+            alert(error + ", try again")
+        }
     }
     function validateMark(value:string){
         const num = Number(value);
