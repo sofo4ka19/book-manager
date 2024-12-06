@@ -10,6 +10,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Navigation, Pagination, Scrollbar } from "swiper/modules";
 import BasicInput from "./BasicInput";
+import BookList from "../models/BookList";
 
 function NavList(){
     const listNames = ["Recommendations", "Wishlist", "Reading", "Finished"];
@@ -28,13 +29,19 @@ function NavList(){
         }//error modal
         else{ 
             let authors = (author!="")? author.split(', '):null;
-            const books = await BookApi.searchBooks(title, authors, null);
-            if(books.length<=0){
-                alert("No books were found")
-                setToggle(false);
-                return;
+            const books = new BookList();
+            try{
+                books.bookArray = await BookApi.searchBooks(title, authors, null);
+                if(books.list.length<=0){
+                    alert("No books were found")
+                    setToggle(false);
+                    return;
+                }
+                books.filterByAnotherLists(store.wishlist, store.currentlyReadingList, store.finishedList)
+                setFoundBooks(books.list); 
+            }catch(error){
+                alert(error);
             }
-            setFoundBooks(books); //need func to check if it is in other lists
         }
     }
     async function addBook(book:Book){ //needs implementing mark for finished
@@ -47,7 +54,11 @@ function NavList(){
             }
             book.myRate = numericMark;
         }
-        await store.addBookToList(book);
+        try{
+            await store.addBookToList(book);
+        }catch(error){
+            alert(error + ", try again")
+        }
         setToggle(false);
         setFoundBooks([]);
         setMark("");

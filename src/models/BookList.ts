@@ -43,7 +43,28 @@ export default class BookList{
             this.books.splice(this.isHere(book.id),1);
         }
     }
-    public get bookArray() : Book[]{
-        return this.books;
+    public set bookArray(list:Book[]){
+        this.books = list;
+    }
+    public filterByAnotherLists(list1:Book[], list2:Book[], list3:Book[]):Book[]{
+        const excludeIsbn = new Set<string>();
+        const excludeTitle = new Set<string>();
+        for (const book of [...list1, ...list2, ...list3]) {
+            if (book.isbn) excludeIsbn.add(book.isbn);
+            if (book.title) excludeTitle.add(book.title.toLowerCase().trim());
+        }
+        return this.books.filter(book => {
+            // Перевірка ISBN
+            if (book.isbn && excludeIsbn.has(book.isbn)) {
+              return false;
+            }
+        
+            // Перевірка назви (на всякий випадок)
+            if (book.title && excludeTitle.has(book.title.toLowerCase().trim())) {
+              return false;
+            }
+        
+            return true; // Якщо немає збігів, залишаємо книгу
+          });
     }
 }

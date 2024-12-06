@@ -32,27 +32,6 @@ export class RecomendationList extends BookList{
             languages: Array.from(languages)
         }
     }
-    public filterByAnotherLists(books:Book[], list1:Book[], list2:Book[], list3:Book[]):Book[]{
-        const excludeIsbn = new Set<string>();
-        const excludeTitle = new Set<string>();
-        for (const book of [...list1, ...list2, ...list3]) {
-            if (book.isbn) excludeIsbn.add(book.isbn);
-            if (book.title) excludeTitle.add(book.title.toLowerCase().trim());
-        }
-        return books.filter(book => {
-            // Перевірка ISBN
-            if (book.isbn && excludeIsbn.has(book.isbn)) {
-              return false;
-            }
-        
-            // Перевірка назви (на всякий випадок)
-            if (book.title && excludeTitle.has(book.title.toLowerCase().trim())) {
-              return false;
-            }
-        
-            return true; // Якщо немає збігів, залишаємо книгу
-          });
-    }
     async generateRecommends({ authors, genres, languages }: { authors: string[], genres: string[], languages: string[] }):Promise<Book[]>{
         try{
             //needs to be changed
@@ -67,10 +46,12 @@ export class RecomendationList extends BookList{
         //need actions if we have no books in lists
         const store = useAppStore.getState();
         const haveRead = store.finishedList;
+        if(haveRead.length==0) return;
         const currentlyReading = store.currentlyReadingList;
         const wishlist = store.wishlist;
         const recommendations = await this.generateRecommends(this.updatePreferences(haveRead));
-        const filteredBooks = this.filterByAnotherLists(recommendations, currentlyReading, wishlist, haveRead);
+        this.books = recommendations;
+        const filteredBooks = this.filterByAnotherLists(currentlyReading, wishlist, haveRead);
          for(let book of filteredBooks){
             super.addBook(book);
          }
