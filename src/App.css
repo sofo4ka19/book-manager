@@ -241,6 +241,7 @@ span{
   background: var(--middleColor1);
   display: flex;
   flex-direction: column;
+  font-family: var(--readFont);
 }
 .close{
   width: 100%;

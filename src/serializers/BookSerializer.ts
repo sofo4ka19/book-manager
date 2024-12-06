@@ -1,6 +1,5 @@
 import { Serializer } from './Serializer';
 import {Book} from '../models/Book';
-import { v4 as uuidv4 } from 'uuid';
 
 export default class BookSerializer extends Serializer<Book>{
     deserialize(data: any): Book {

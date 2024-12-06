@@ -25,7 +25,7 @@ export default class BookApi extends ApiClient {
     }
     const configBase = {
         params: {
-            q: params.join('+'), // Поєднуємо всі параметри в один запит
+            q: params.join('+'), 
         },
     };
     this.client = axios.create({baseURL:'https://www.googleapis.com/books/v1'});
@@ -33,7 +33,6 @@ export default class BookApi extends ApiClient {
     const results: Book[] = [];
     const serialised = new BookSerializer();
     if (languages && languages.length > 0) {
-        // Окремий запит для кожної мови
         for (const language of languages) {
             const config = {
                 ...configBase,
@@ -45,7 +44,6 @@ export default class BookApi extends ApiClient {
 
             try {
                 const response = await this.get<any>(endpoint, config);
-                console.log(title, authors, genres, language, ":", response)
                 if (response?.items) {
                     results.push(
                         ...response.items.map((item: any) => serialised.deserialize(item))
@@ -53,12 +51,11 @@ export default class BookApi extends ApiClient {
                 }
             } catch (error) {
                 console.error(`Error fetching books for language ${language}:`, error);
+                throw error
             }
         }}else {
-            // Запит без мовного обмеження
             try {
                 const response = await this.get<any>(endpoint, configBase);
-                console.log(title, authors, genres, languages, ":", response)
                 if (response?.items) {
                     results.push(
                         ...response.items.map((item: any) => serialised.deserialize(item))
@@ -66,17 +63,16 @@ export default class BookApi extends ApiClient {
                 }
             } catch (error) {
                 console.error("Error fetching books:", error);
+                throw error
             }
         }
     
         return results;
    
   }
-  public static async searchBookOR(authors:string[]|null, genres:string[]|null, languages?:string[]){
+  public static async searchBookOR(authors:string[]|null, genres:string[]|null, languages?:string[]){ //should be checked the logic of requests to api and perhaps join smth
     if(!authors && !genres) return [];
-    try{
-        // const exactMatch = await BookApi.searchBooks(null, authors, null, languages);
-        
+    try{        
         const queries = [];
         if (genres && genres.length > 0) {
             const filteredGenres = genres.filter(genre => genre !== "Unknown genre");
@@ -89,13 +85,13 @@ export default class BookApi extends ApiClient {
                     }
                 }}
             }
-            queries.push(BookApi.searchBooks(null, null, filteredGenres, languages)); // Запит для жанрів
-        }
+            queries.push(BookApi.searchBooks(null, null, filteredGenres, languages)); 
+         }
         
         if (authors && authors.length > 0) {
             for(let author of authors){
                 if(author!="Unknown author"){
-                    queries.push(BookApi.searchBooks(null, [author], null, languages)); // Запит для авторів
+                    queries.push(BookApi.searchBooks(null, [author], null, languages)); 
                 }
             }
         }
@@ -104,14 +100,11 @@ export default class BookApi extends ApiClient {
         const uniqueBooks = new Map<string, Book>();
 
         const addBooksToMap = (books: Book[]) => {
-            books.forEach(book => uniqueBooks.set(book.id, book)); // Використовуємо `id` як ключ
+            books.forEach(book => uniqueBooks.set(book.id, book)); 
         };
 
-        // Додаємо книги з точного збігу та додаткових запитів
-        //addBooksToMap(exactMatch);
         addBooksToMap(results.flat());
         console.log(Array.from(uniqueBooks.values()))
-        // Повертаємо унікальні книги
         return Array.from(uniqueBooks.values());
     }catch (error) {
         console.error("Error fetching recommendations:", error);

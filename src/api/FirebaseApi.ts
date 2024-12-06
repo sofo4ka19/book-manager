@@ -6,8 +6,9 @@ import { useAppStore } from '../store/Store';
 
 export default class FirebaseApi{
     static async createUser(user: UserTemp) {
+      try{
         const userRef = doc(db, "users", user.id);
-        // Set user data in Firestore
+        
         await setDoc(userRef, {
           username: user.username,
           email: user.email,
@@ -15,7 +16,6 @@ export default class FirebaseApi{
           avatar: user.avatar,
         });
     
-        // Create empty lists for the user
         const lists = ["wishlist", "reading", "finished"];
         const listsRef = collection(userRef, "lists");
     
@@ -23,60 +23,46 @@ export default class FirebaseApi{
           const listRef = doc(listsRef, listName);
           await setDoc(listRef, { books: [] });
         }
+      }catch(error){
+        throw error
+      }
       }
 
-      static async getUserData(userId:string) : Promise<UserTemp|null>{ //perhaps should be updated
-        const userDoc = doc(db, "users", userId);
-        const userSnap = await getDoc(userDoc);
+      static async getUserData(userId:string) : Promise<UserTemp|null>{ //perhaps should be updated and optimized
+        try{
+          const userDoc = doc(db, "users", userId);
+          const userSnap = await getDoc(userDoc);
 
-        if (userSnap.exists()) {
-        const userData: UserTemp = userSnap.data() as UserTemp;
-         // Отримуємо референс до підколекції "lists"
-        const listsRef = collection(userDoc, "lists");
+          if (userSnap.exists()) {
+          const userData: UserTemp = userSnap.data() as UserTemp;
+          const listsRef = collection(userDoc, "lists");
 
-        // Зчитуємо списки книг
-        //const lists = ["wishlist", "reading", "finished"];
-          //const userLists: { [key: string]: string[]|{ id: string, myRate: number }[] } = {};
+            const wishlistSnap = await getDoc(doc(listsRef, "wishlist"));
+            const wishlist = wishlistSnap.exists()? wishlistSnap.data().books : [];
+            const readingSnap = await getDoc(doc(listsRef, "reading"));
+            const reading = readingSnap.exists()? readingSnap.data().books : [];
+            const finishedSnap = await getDoc(doc(listsRef, "finished"));
+            const finished = finishedSnap.exists()? finishedSnap.data().books : [];
 
-          // for (const listName of lists) {
-          //     const listDoc = doc(listsRef, listName);
-          //     const listSnap = await getDoc (listDoc);
-          //     // if(listName=="finished"){
-          //     //   userLists[listName] = listSnap.exists() ? (listSnap.data().books || []).map((book: any) => ({
-          //     //     id: book.id,
-          //     //     myRate: book.myRate ?? 0, // Забезпечуємо наявність myRate
-          //     //   })) : [{}];
-          //     // }
-          //     // else{
-          //       userLists[listName] = listSnap.exists() ? listSnap.data().books || [] : [];
-          //     // }
-              
-          // }
-          const wishlistSnap = await getDoc(doc(listsRef, "wishlist"));
-          const wishlist = wishlistSnap.exists()? wishlistSnap.data().books : [];
-          const readingSnap = await getDoc(doc(listsRef, "reading"));
-          const reading = readingSnap.exists()? readingSnap.data().books : [];
-          const finishedSnap = await getDoc(doc(listsRef, "finished"));
-          const finished = finishedSnap.exists()? finishedSnap.data().books : [];
-
-          // Якщо список не існує, створіть його як порожній
-          return {
-              ...userData,
-              wishlist: wishlist,
-              readingList: reading,
-              haveRead: finished,
-          };
-        } else {
-            return null;
+            return {
+                ...userData,
+                wishlist: wishlist,
+                readingList: reading,
+                haveRead: finished,
+            };
+          } else {
+              return null;
+          }
+        }catch(error){
+          throw error
         }
       }
     
-      // Add book to user's list or create new book in Firestore
+
       static async addBookToUserList(userId: string, listName: string, book: Book) {
-        // Check if book already exists in the books collection
+        try{
         const bookId = await FirebaseApi.checkIfBookExists(book);
     
-        // If book doesn't exist, create it
         let newBookId;
         if (!bookId) {
           const bookRef = await addDoc(collection(db, "books"), {
@@ -94,41 +80,45 @@ export default class FirebaseApi{
           newBookId = bookId;
           const bookRef = doc(db, "books", newBookId);
           await updateDoc(bookRef, {
-            users: arrayUnion(userId), // Додаємо ID користувача до списку
+            users: arrayUnion(userId), 
         });
         }
         book.id = newBookId;
-        // Add the book to the user's list
+        
         const userListRef = doc(db, "users", userId, "lists", listName.toLowerCase());
         if(listName.toLowerCase()=="finished" && book.myRate){
           await updateDoc(userListRef, {
-            books: arrayUnion({id: newBookId, myRate: book.myRate}), // Adds the book id and mark to the user's finished list
+            books: arrayUnion({id: newBookId, myRate: book.myRate}),
           });
         }
         else{
           await updateDoc(userListRef, {
-            books: arrayUnion(newBookId), // Adds the book id to the user's list
+            books: arrayUnion(newBookId), 
           });
         }
+      }catch(error){
+        throw error
+      }
       }
     
-      // Remove book from user's list and from books collection if necessary
+      
       static async removeBookFromUserList(userId: string, listName: string, bookId: string, rate?:number) {
+        try{
         const userListRef = doc(db, "users", userId, "lists", listName.toLowerCase());
-        // Remove book from the user's list
+        
         if(listName=="Finished" && rate){
           await updateDoc(userListRef, {
-            books: arrayRemove({id: bookId, myRate: rate}), // Removes the book id from the user's list
+            books: arrayRemove({id: bookId, myRate: rate}), 
           });
         }
         else{
           await updateDoc(userListRef, {
-            books: arrayRemove(bookId), // Removes the book id from the user's list
+            books: arrayRemove(bookId), 
           });
         }
     
         // Optionally, remove the book from the books collection if no user references it
-        //if(!toChange){
+        
           const bookRef = doc(db, "books", bookId);
           const bookSnap = await getDoc(bookRef);
           if (bookSnap.exists()) {
@@ -137,15 +127,12 @@ export default class FirebaseApi{
             const updatedUsers = bookUsers.filter((user: string) => user !== userId);
       
             if (updatedUsers.length === 0) {
-              // Delete the book from the books collection if no users reference it
               await deleteDoc(bookRef);
             } else {
-              // Update book's user references
               await updateDoc(bookRef, { users: updatedUsers });
             }
-          //}
         }
-        
+      }catch(error){ throw error}
       }
       //do we need it?
       // Load books for a user from a specific list
@@ -160,73 +147,70 @@ export default class FirebaseApi{
       }
         
     
-      // Check if a book already exists in the Firestore books collection
       static async checkIfBookExists(book: Book): Promise<string | null> {
-        const booksRef = collection(db, "books"); 
-        let conditions = [];
-        // Додаємо умову для ISBN, якщо він є
-        if (book.isbn) {
-          conditions.push(where("isbn", "==", book.isbn));
-        }
-
-        // Додаємо умову для назви
-        if (book.title) {
-          conditions.push(where("title", "==", book.title));
-        }
-
-        // Додаємо умову для авторів
-        if (book.authors && book.authors.length > 0) {
-          conditions.push(where("authors", "array-contains-any", book.authors));
-        }
-
-        // Створюємо запит тільки якщо є умови
-        if (conditions.length > 0) {
-          const queryConstraints = query(booksRef, ...conditions);
-          const querySnapshot = await getDocs(queryConstraints);
-
-          if (!querySnapshot.empty) {
-            console.log("Book found!");
-            return querySnapshot.docs[0].id; // Повертаємо ID першого знайденого документа
+        try{
+          const booksRef = collection(db, "books"); 
+          let conditions = [];
+          if (book.isbn) {
+            conditions.push(where("isbn", "==", book.isbn));
           }
-        }
 
-        console.log("Book not found.");
-        return null; 
+          if (book.title) {
+            conditions.push(where("title", "==", book.title));
+          }
+
+          if (book.authors && book.authors.length > 0) {
+            conditions.push(where("authors", "array-contains-any", book.authors));
+          }
+
+          if (conditions.length > 0) {
+            const queryConstraints = query(booksRef, ...conditions);
+            const querySnapshot = await getDocs(queryConstraints);
+
+            if (!querySnapshot.empty) {
+              return querySnapshot.docs[0].id; 
+            }
+          }
+          return null; 
+        }catch(error){throw error}
       }
 
       static async loadBooksByIds(bookIds: string[]):Promise<Book[]>{ //add polymorphysm to search with ratings
         if(!bookIds) return [];
+        try{
         const bookPromises = bookIds.map(async (bookId:string) => {
           const bookRef = doc(db, "books", bookId);
           const bookSnap = await getDoc(bookRef);
   
           if (bookSnap.exists()) {
-              return { id: bookId, ...bookSnap.data() }; // Додаємо id до даних книги
+              return { id: bookId, ...bookSnap.data() }; 
           }
           return null; // Якщо книга не знайдена
         });
         const books = (await Promise.all(bookPromises)).filter((book): book is Book => book !== null);
         return books;
+        }catch(error){throw error}
       }
       static async loadBooksWithRating(books:{ id: string, myRate: number }[]):Promise<Book[]>{ //add polymorphysm to search with ratings
         if(!books || books.length === 0) return [];
-        const bookPromises = books.map(async (book) => {
-          const bookRef = doc(db, "books", book.id);
-          const bookSnap = await getDoc(bookRef);
-  
-          if (bookSnap.exists()) {
-              return { id: book.id, ...bookSnap.data(), myRate: book.myRate }; 
-          }
-          return null; // Якщо книга не знайдена
-        });
-        const result = (await Promise.all(bookPromises)).filter((book): book is Book & { myRate: number } => book !== null);
-        return result;
+        try{
+          const bookPromises = books.map(async (book) => {
+            const bookRef = doc(db, "books", book.id);
+            const bookSnap = await getDoc(bookRef);
+    
+            if (bookSnap.exists()) {
+                return { id: book.id, ...bookSnap.data(), myRate: book.myRate }; 
+            }
+            return null; 
+          });
+          const result = (await Promise.all(bookPromises)).filter((book): book is Book & { myRate: number } => book !== null);
+          return result;
+        }catch(error){throw error}
       }
 
       static async updateUserInfo(userId:string, name:string, bio: string|null, avatarUrl: string){
         const userRef = doc(db, "users", userId);
     
-            // Формуємо дані для оновлення
             const updates: { username?: string; bio?: string|null; avatar?: string } = {};
             
             if (name && name.length > 0) {
@@ -239,16 +223,18 @@ export default class FirebaseApi{
                 updates.avatar = avatarUrl;
             }
 
-            // Якщо є що оновлювати, виконуємо оновлення
             if (Object.keys(updates).length > 0) {
+              try{
                 await updateDoc(userRef, updates);
+              }catch(error){throw error}
             }
       }
       static async logout(){ 
         try {
-            await auth.signOut(); // викликаємо метод для логауту в Firebase
+            await auth.signOut(); 
         } catch (error) {
-            console.error("Logout error:", error); // обробка помилки
+            console.error("Logout error:", error); 
+            throw error
         }
       }
 }

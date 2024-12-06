@@ -43,7 +43,6 @@ export class RecomendationList extends BookList{
        }
     }
     public async addBook(): Promise<void> {
-        //need actions if we have no books in lists
         const store = useAppStore.getState();
         const haveRead = store.finishedList;
         if(haveRead.length==0) return;
@@ -51,10 +50,7 @@ export class RecomendationList extends BookList{
         const wishlist = store.wishlist;
         const recommendations = await this.generateRecommends(this.updatePreferences(haveRead));
         this.books = recommendations;
-        const filteredBooks = this.filterByAnotherLists(currentlyReading, wishlist, haveRead);
-         for(let book of filteredBooks){
-            super.addBook(book);
-         }
+        this.filterByAnotherLists(currentlyReading, wishlist, haveRead);
      }
     
 }

@@ -8,7 +8,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Navigation, Pagination, Scrollbar } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import BasicInput from "./BasicInput";
 import BookList from "../models/BookList";
 
@@ -18,8 +18,8 @@ function NavList(){
     const [foundBooks, setFoundBooks] = useState<Book[]>([]); 
     const [mark, setMark] = useState<string>("");
     const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-    let author ="";
-    let title = "";
+    const [author, setAuthor] =useState<string>("");
+    const [title, setTitle] = useState<string>("");
     const store = useAppStore()
     async function findBook(e: React.FormEvent){
         e.preventDefault();
@@ -38,6 +38,11 @@ function NavList(){
                     return;
                 }
                 books.filterByAnotherLists(store.wishlist, store.currentlyReadingList, store.finishedList)
+                if(books.list.length<=0){
+                    alert("This book was added to one of your lists")
+                    setToggle(false);
+                    return;
+                }
                 setFoundBooks(books.list); 
             }catch(error){
                 alert(error);
@@ -89,9 +94,9 @@ function NavList(){
                     <div className="fields">
                                 {/* perhaps should make it used useState */}
                                 <label>Author</label>
-                                <input onChange={(e) => author = e.target.value} type="text" />
+                                <input onChange={(e) => setAuthor(e.target.value)} type="text" />
                                 <label>Title</label>
-                                <input onChange={(e) => title = e.target.value} type="text" />
+                                <input onChange={(e) => setTitle(e.target.value)} type="text" />
                     </div>
                     {/* perhaps should be transformed to prop */}
                     <button type="submit">Search</button> 

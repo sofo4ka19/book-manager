@@ -1,7 +1,6 @@
 import BookList from "./BookList";
 import {Book} from "./Book";
 import { RecomendationList } from "./RecommendationList";
-import { useAppStore } from "../store/Store";
 
 export interface UserTemp{
     id: string;
@@ -17,7 +16,6 @@ export default class User{
     constructor(
         private id:string,
         private username: string,
-        private email: string, //perhaps it will be also deleted
         private bio: string|null,
         private avatar: string = "/avatar_default.png",
         private wishlist: BookList = new BookList(),
@@ -25,10 +23,6 @@ export default class User{
         private haveRead: BookList = new BookList(),
         private recommendationList: RecomendationList = new RecomendationList(),
     ){
-        // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        // if (!emailPattern.test(email)) {
-        //     throw new Error("Unavailable email value");
-        // }
     }
     public get info(): {username: string, photo: string, bio:string|null}{
         return {username: this.username, photo: this.avatar, bio: this.bio};
@@ -39,10 +33,6 @@ export default class User{
     public get uid():string{
         return this.id;
     }
-    // public changeUsername(newUsername: string){
-    //     //needs to check if somebody doesn't have such username
-    //     this.username=newUsername;
-    // }
     public addBookToList(list:BookList, book:Book, myAssesment?:number){
         if(list==this.haveRead){
             if(myAssesment){
@@ -68,6 +58,5 @@ export default class User{
         if(name && name.length>0) this.username=name;
         if(bio && bio.length>0)this.bio=bio;
         if(avatar && avatar.length>0)this.avatar = avatar;
-        //useAppStore.getState().setUser(this);
     }
 }

@@ -7,7 +7,7 @@ type BookCardProps = {
     children?: React.ReactNode; // Кастомний контент (кнопки чи інші елементи)
   };
 
-const BookCard: React.FC<BookCardProps> = ({ book, children }) => { //add myRate if exist
+const BookCard: React.FC<BookCardProps> = ({ book, children }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     return (
     <>
