@@ -2,7 +2,6 @@ import { doc, setDoc, collection, addDoc, getDoc, getDocs, query, where, updateD
 import { auth, db } from '../firebase';
 import { UserTemp } from '../models/User';
 import { Book } from '../models/Book';
-import { useAppStore } from '../store/Store';
 
 export default class FirebaseApi{
     static async createUser(user: UserTemp) {
